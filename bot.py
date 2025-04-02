@@ -52,3 +52,7 @@ async def on_ready():
     # Sync commands with Discord
     await tree.sync()
     print("Slash commands synced")
+
+# Run the client
+if __name__ == "__main__":
+    client.run(TOKEN)
