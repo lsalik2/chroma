@@ -174,7 +174,7 @@ async def on_ready():
         print(f"Error syncing commands: {e}")
     activity = discord.Activity(
         type=discord.ActivityType.listening, 
-        name="/rv_chroma_test"
+        name="/chroma"
     )
     await client.change_presence(activity=activity)
     print('Bot is ready!')
