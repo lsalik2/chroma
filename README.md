@@ -89,7 +89,7 @@ Use the `/chroma` command with the following parameters:
 3. Choose your formatting options from the dropdown menus
 4. Click "Submit"
 
-## ANSI Colors Reference
+## ANSI Format/Colors Reference
 
 | Formats       | Text Colors | Background Colors |
 |---------------|-------------|-------------------|
@@ -124,4 +124,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Support
 
-If you need help with setup or have questions, please open an issue on GitHub or message **slk** on Discord).
+If you need help with setup or have questions, please open an issue on GitHub or message **slk** on Discord.
