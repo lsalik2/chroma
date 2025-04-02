@@ -21,6 +21,8 @@ A Discord app that converts messages into colorful ANSI-formatted text blocks! P
 
 ## Installation
 
+You can easily add ChromaText to your apps or server by clicking [here](https://discord.com/oauth2/authorize?client_id=1356766929800532281). However, if you're interested in contributing, or maybe creating your own version of ChromaText, then you can do so by following the guide below.
+
 ### Requirements
 
 - Python 3.8+
