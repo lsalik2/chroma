@@ -13,7 +13,7 @@ def build_ansi_response(message: str, format_value: int, text_color_value: int, 
     ansi_code = f"\u001b[{format_value};{text_color_value};{background_color_value}m"
     reset_code = "\u001b[0m"
     if mobile_friendly:
-        return f"\`\`\`ansi\n{ansi_code}{message}{reset_code}\n\`\`\`"
+        return f"```ansi\n{ansi_code}{message}{reset_code}\n```"
     else:
         return (
             "Here's your colorized message:\n"
