@@ -91,8 +91,15 @@ async def color_command(
     ansi_code = f"[{format.value};{text_color.value};{background_color.value}m"
     reset_code = "[0m"
     
-    # Format the response with the ANSI code block
-    response = f"Here's your colorized message:\n```ansi\n{ansi_code}{message}{reset_code}\n```"
+    # Format the response with colorized code block preview and raw text
+    response = (
+        "Here's your colorized message:\n"
+        f"```ansi\n{{ansi_code}}{{message}}{{reset_code}}\n```\n"
+        "Raw text for copy-pasting:\n"
+        "\`\`\`ansi\n"
+        f"{{ansi_code}}{{message}}{{reset_code}}\n"
+        "\`\`\`"
+    ).format(ansi_code=ansi_code, message=message, reset_code=reset_code)
     
     # Send the response as ephemeral (only visible to the command user)
     await interaction.response.send_message(response, ephemeral=True)
