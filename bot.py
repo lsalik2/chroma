@@ -2,6 +2,27 @@ import os
 import discord
 from discord import app_commands
 
+# --------------------- Section: Shared Helper Function ---------------------
+def build_ansi_response(message: str, format_value: int, text_color_value: int, background_color_value: int, mobile_friendly: bool = False) -> str:
+    """
+    Build the ANSI formatted response.
+    If mobile_friendly is True, only the raw ANSI code block is returned.
+    Otherwise, a preview and a raw block for copy-pasting are provided.
+    """
+    ansi_code = f"[{format_value};{text_color_value};{background_color_value}m"
+    reset_code = "[0m"
+    if mobile_friendly:
+        return f"\`\`\`ansi\n{ansi_code}{message}{reset_code}\n\`\`\`"
+    else:
+        return (
+            "Here's your colorized message:\n"
+            f"```ansi\n{ansi_code}{message}{reset_code}\n```\n"
+            "Raw text for copy-pasting:\n"
+            "\`\`\`ansi\n"
+            f"{ansi_code}{message}{reset_code}\n"
+            "\`\`\`"
+        )
+
 # --------------------- Section: Token Loading ---------------------
 with open(".env", "r") as f:
     token_line = f.read().strip()
@@ -48,25 +69,19 @@ tree = app_commands.CommandTree(client)
 # --------------------- Section: Start-up Functions and Debugs ---------------------
 @client.event
 async def on_ready():
-    """When bot is connected and ready, triggers event"""
     print(f'Logged in as {client.user} (ID: {client.user.id})')
     print('------')
-    
-    # Force sync commands globally (this is important!)
     try:
         print("Syncing commands globally...")
         await tree.sync()
         print("Command sync completed successfully")
     except Exception as e:
         print(f"Error syncing commands: {e}")
-    
-    # Custom status to let users know about the bot
     activity = discord.Activity(
         type=discord.ActivityType.listening, 
         name="/color commands"
     )
     await client.change_presence(activity=activity)
-
     print('Bot is ready!')
 
 # --------------------- Section: /color Command ---------------------
@@ -76,13 +91,13 @@ async def on_ready():
     format="Text formatting",
     background_color="The background color",
     text_color="The color of the text",
-    mobile_friendly="Mobile-friendly output?"
+    mobile_friendly="Mobile-friendly copy-paste output"
 )
 @app_commands.choices(
     format=FORMAT_OPTIONS,
     background_color=BACKGROUND_COLORS,
     text_color=TEXT_COLORS,
-    mobile_friendly=MOBILE_FRIENDLY_OPTIONS
+    mobile_friendly=MOBILE_FRIENDLY_OPTIONS # Optional parameter, defaults to None
 )
 async def color_command(
     interaction: discord.Interaction, 
@@ -90,38 +105,10 @@ async def color_command(
     format: app_commands.Choice[int],
     background_color: app_commands.Choice[int],
     text_color: app_commands.Choice[int],
-    mobile_friendly: app_commands.Choice[str] = None  # Optional parameter, defaults to None
+    mobile_friendly: app_commands.Choice[str] = None
 ):
-    
-    """Command to create a colorful ANSI-formatted code block"""
-    # Determine mobile-friendly option; default to "no" if not provided
-    mobile_friendly_value = mobile_friendly.value if mobile_friendly is not None else None
-
-    # Create ANSI formatted text
-    ansi_code = f"[{format.value};{text_color.value};{background_color.value}m"
-    reset_code = "[0m"
-    
-    # Build response if mobile_friendly option is Yes
-    if mobile_friendly_value == "yes":
-        # Mobile-friendly output: only the raw text for copy-pasting
-        response = (
-            "\`\`\`ansi\n"
-            f"{{ansi_code}}{{message}}{{reset_code}}\n"
-            "\`\`\`"
-        ).format(ansi_code=ansi_code, message=message, reset_code=reset_code)
-
-    else: 
-        # Format the response with colorized code block preview and raw text
-        response = (
-            "Here's your colorized message:\n"
-            f"```ansi\n{{ansi_code}}{{message}}{{reset_code}}\n```\n"
-            "Raw text for copy-pasting:\n"
-            "\`\`\`ansi\n"
-            f"{{ansi_code}}{{message}}{{reset_code}}\n"
-            "\`\`\`"
-        ).format(ansi_code=ansi_code, message=message, reset_code=reset_code)
-    
-    # Send the response as ephemeral (only visible to the command user)
+    mobile_flag = (mobile_friendly is not None and mobile_friendly.value == "yes")
+    response = build_ansi_response(message, format.value, text_color.value, background_color.value, mobile_flag)
     await interaction.response.send_message(response, ephemeral=True)
 
 # --------------------- Section: Run the Client ---------------------
