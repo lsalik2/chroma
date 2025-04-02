@@ -49,9 +49,15 @@ async def on_ready():
     print(f'Logged in as {client.user} (ID: {client.user.id})')
     print('------')
     
-    # Sync commands with Discord
-    await tree.sync()
-    print("Slash commands synced")
+    # Force sync commands globally (this is important!)
+    try:
+        print("Syncing commands globally...")
+        await tree.sync()
+        print("Command sync completed successfully")
+    except Exception as e:
+        print(f"Error syncing commands: {e}")
+    
+    print('Bot is ready!')
 
 # Run the client
 if __name__ == "__main__":
