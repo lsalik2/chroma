@@ -2,7 +2,7 @@
 
 A Discord app that converts messages into colorful ANSI-formatted text blocks! Perfect for making your important messages stand out or adding some flair to your Discord server.
 
-![ChromaText Demo](https://via.placeholder.com/800x400)
+![ChromaText Demo](demo.png)
 
 ## Features
 
