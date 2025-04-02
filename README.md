@@ -1,6 +1,6 @@
 # ChromaText 🌈
 
-A Discord app that converts messages into colorful ANSI-formatted text blocks! Perfect for making your important messages stand out or adding some flair to your Discord server.
+A Discord utility app that can convert messages into colorful ANSI-formatted text blocks, translates messages between languages, and more! Perfect for making your important messages stand out, adding some flair to your Discord server, or communicating with users who speak different languages.
 
 <p align="center">
 <img src="logo.png" width="400" height="400">
@@ -13,11 +13,18 @@ A Discord app that converts messages into colorful ANSI-formatted text blocks! P
 
 ## Features
 
-- **Slash Command**: Use `/chroma` to create custom colored text
-- **Context Menu**: Right-click any message and select "Colorize Text" to transform it
-- **Formatting Options**: Choose from normal, bold, or underlined text
-- **Color Choices**: 8 text colors and 8 background colors to mix and match
-- **Mobile-Friendly Mode**: Optional streamlined output for easier copy-pasting on mobile devices
+- **Text Formatting**
+  - **Slash Command**: Use `/chroma` to create custom colored text
+  - **Context Menu**: Right-click any message and select "Colorize Text" to transform it
+  - **Formatting Options**: Choose from normal, bold, or underlined text
+  - **Color Choices**: 8 text colors and 8 background colors to mix and match
+  - **Mobile-Friendly Mode**: Optional streamlined output for easier copy-pasting on mobile devices
+
+- **Translation**
+  - **Slash Command**: Use `/translate` to translate text to another language
+  - **Context Menu**: Right-click any message and select "Translate" to translate it
+  - **Language Options**: Choose from 10 popular languages including English, Spanish, French, and more
+  - **Auto-Detection**: Automatically detects the source language of the message
 
 ## Installation
 
@@ -28,6 +35,7 @@ You can easily add ChromaText to your apps or server by clicking [here](https://
 - Python 3.8+
 - Discord.py v2.0+
 - python-dotenv
+- googletrans==4.0.2
 
 ### Setup
 
@@ -35,7 +43,7 @@ You can easily add ChromaText to your apps or server by clicking [here](https://
 
    ```bash
    git clone https://github.com/lsalik2/chromatext.git
-   cd chroma-text
+   cd chromatext
    ```
 
 2. **Install dependencies**
@@ -72,7 +80,9 @@ You can easily add ChromaText to your apps or server by clicking [here](https://
 
 ## Usage
 
-### Slash Command
+### Text Formatting
+
+#### /chroma Command
 
 Use the `/chroma` command with the following parameters:
 
@@ -82,11 +92,27 @@ Use the `/chroma` command with the following parameters:
 - `text_color`: Select a text color
 - `mobile_friendly`: (Optional) Simplified output for mobile users
 
-### Context Menu
+#### "Colorize" Context Menu
 
 1. Right-click on any message
 2. Select Apps > Colorize Text
 3. Choose your formatting options from the dropdown menus
+4. Click "Submit"
+
+### Translation
+
+#### /translate Command
+
+Use the `/translate` command with the following parameters:
+
+- `text`: The text you want to translate
+- `language`: The target language to translate to
+
+#### "Translate" Context Menu
+
+1. Right-click on any message
+2. Select Apps > Translate
+3. Choose your target language from the dropdown menu
 4. Click "Submit"
 
 ## ANSI Format/Colors Reference
@@ -101,6 +127,21 @@ Use the `/chroma` command with the following parameters:
 |               | Pink (35)   | Indigo (45)       |
 |               | Cyan (36)   | Silver (46)       |
 |               | White (37)  | White (47)        |
+
+## Supported Languages
+
+| Language | Code |
+|----------|------|
+| English | en |
+| Spanish | es |
+| French | fr |
+| German | de |
+| Italian | it |
+| Portuguese | pt |
+| Russian | ru |
+| Japanese | ja |
+| Chinese (Simplified) | zh-cn |
+| Arabic | ar |
 
 ## Contributing
 
@@ -120,6 +161,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - [A guide to ANSI on Discord](https://gist.github.com/kkrypt0nn/a02506f3712ff2d1c8ca7c9e0aed7c06#text-colors) by kkrypt0nn
 - The Discord.py team for their excellent library
+- The googletrans library for translation functionality
 - All contributors who help improve ChromaText
 
 ## Support
