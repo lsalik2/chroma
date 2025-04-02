@@ -57,14 +57,14 @@ async def on_ready():
     except Exception as e:
         print(f"Error syncing commands: {e}")
     
-    print('Bot is ready!')
-
     # Custom status to let users know about the bot
     activity = discord.Activity(
         type=discord.ActivityType.listening, 
         name="/color commands"
     )
     await client.change_presence(activity=activity)
+
+    print('Bot is ready!')
 
 # Run the client
 if __name__ == "__main__":
