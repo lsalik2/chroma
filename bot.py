@@ -1,5 +1,6 @@
 import os
 import discord
+import random
 from discord import app_commands
 from dotenv import load_dotenv
 from googletrans import Translator
@@ -47,6 +48,30 @@ async def translate_text(text: str, dest_language: str) -> dict:
             "error": str(e),
             "original_text": text
         }
+    
+def randomize_format(message: str, mobile_friendly: bool = False) -> str:
+    '''
+    Randomizes the ANSI formatted response.
+    If mobile_friendly is True, only the raw ANSI code block is returned.
+    Otherwise, a preview and a raw block for copy-pasting are provided.
+    '''
+    format_value = random.choice([0, 1, 4])
+    text_color_value = random.choice([31, 32, 33, 34, 35, 36, 37])
+    background_color_value = random.choice([40, 41, 42, 43, 44, 45, 46, 47])
+
+    ansi_code = f"\u001b[{format_value};{text_color_value};{background_color_value}m"
+    reset_code = "\u001b[0m"
+    if mobile_friendly:
+        return f"```ansi\n{ansi_code}{message}{reset_code}\n```"
+    else:
+        return (
+            "Here's your colorized message:\n"
+            f"```ansi\n{ansi_code}{message}{reset_code}\n```\n"
+            "Raw text for copy-pasting:\n"
+            "\`\`\`ansi\n"
+            f"{ansi_code}{message}{reset_code}\n"
+            "\`\`\`"
+        )
 
 # --------------------- Section: Options Choices ---------------------
 FORMAT_OPTIONS = [
@@ -149,7 +174,7 @@ async def on_ready():
         print(f"Error syncing commands: {e}")
     activity = discord.Activity(
         type=discord.ActivityType.listening, 
-        name="/chroma"
+        name="/rv_chroma_test"
     )
     await client.change_presence(activity=activity)
     print('Bot is ready!')
@@ -221,6 +246,24 @@ async def translate_command(
             f"Error translating: {result['error']}",
             ephemeral=True
         )
+
+# --------------------- Section: Randomize Format ---------------------
+@tree.command(name="randomize", description="Generate random colorful ANSI code block")
+@app_commands.describe(
+    message="The message to colorize",
+    mobile_friendly="Mobile-friendly copy-paste output")
+
+@app_commands.choices(
+    mobile_friendly=[app_commands.Choice(name="Yes", value="yes")])
+
+async def randomize_command(
+    interaction: discord.Interaction, 
+    message: str, 
+    mobile_friendly: app_commands.Choice[str] = None
+    ):
+    mobile_flag = (mobile_friendly is not None and mobile_friendly.value == "yes")
+    response = randomize_format(message, mobile_flag)
+    await interaction.response.send_message(response, ephemeral=True)
 
 # --------------------- Section: Colorize Context Menu ---------------------
 @tree.context_menu(name="Colorize")
