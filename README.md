@@ -1,11 +1,12 @@
 # ChromaText 🌈
 
-<img src="logo.png" width="400" height="400">
-
 A Discord app that converts messages into colorful ANSI-formatted text blocks! Perfect for making your important messages stand out or adding some flair to your Discord server.
 
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Add it on Discord!](https://img.shields.io/badge/Add_it_on_Discord!-Invite-7289da?logo=discord&logoColor=ffffff)](https://discord.com/oauth2/authorize?client_id=1356766929800532281)
+<p align="center">
+<img src="logo.png" width="400" height="400">
+<a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
+<a href="https://discord.com/oauth2/authorize?client_id=1356766929800532281"><img src="https://img.shields.io/badge/Add_it_on_Discord!-Invite-7289da?logo=discord&logoColor=ffffff" alt="Add it on Discord! - Invite"></a>
+</p>
 
 ## Features
 
