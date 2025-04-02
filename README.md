@@ -4,6 +4,9 @@ A Discord app that converts messages into colorful ANSI-formatted text blocks! P
 
 <p align="center">
 <img src="logo.png" width="400" height="400">
+</p>
+
+<p align="center">
 <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
 <a href="https://discord.com/oauth2/authorize?client_id=1356766929800532281"><img src="https://img.shields.io/badge/Add_it_on_Discord!-Invite-7289da?logo=discord&logoColor=ffffff" alt="Add it on Discord! - Invite"></a>
 </p>
