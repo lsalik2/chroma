@@ -2,8 +2,9 @@ import os
 import discord
 from discord import app_commands
 from dotenv import load_dotenv
+from googletrans import Translator
 
-# --------------------- Section: Shared Helper Function ---------------------
+# --------------------- Section: Helper Functions ---------------------
 def build_ansi_response(message: str, format_value: int, text_color_value: int, background_color_value: int, mobile_friendly: bool = False) -> str:
     """
     Build the ANSI formatted response.
@@ -23,6 +24,29 @@ def build_ansi_response(message: str, format_value: int, text_color_value: int, 
             f"{ansi_code}{message}{reset_code}\n"
             "\`\`\`"
         )
+
+async def translate_text(text: str, dest_language: str) -> dict:
+    """
+    Translate text to the specified language and return result details.
+    This is an async function that awaits the translation.
+    """
+    translator = Translator()
+    try:
+        # Properly await the translation as it's a coroutine
+        result = await translator.translate(text, dest=dest_language)
+        return {
+            "success": True,
+            "original_text": text,
+            "translated_text": result.text,
+            "src_language": result.src,
+            "dest_language": result.dest
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e),
+            "original_text": text
+        }
 
 # --------------------- Section: Options Choices ---------------------
 FORMAT_OPTIONS = [
@@ -51,6 +75,19 @@ TEXT_COLORS = [
     app_commands.Choice(name="Red", value=31),
     app_commands.Choice(name="White", value=37),
     app_commands.Choice(name="Yellow", value=33)
+]
+
+LANGUAGE_OPTIONS = [
+    app_commands.Choice(name="English", value="en"),
+    app_commands.Choice(name="Spanish", value="es"),
+    app_commands.Choice(name="French", value="fr"),
+    app_commands.Choice(name="German", value="de"),
+    app_commands.Choice(name="Italian", value="it"),
+    app_commands.Choice(name="Portuguese", value="pt"),
+    app_commands.Choice(name="Russian", value="ru"),
+    app_commands.Choice(name="Japanese", value="ja"),
+    app_commands.Choice(name="Chinese (Simplified)", value="zh-cn"),
+    app_commands.Choice(name="Arabic", value="ar")
 ]
 
 FORMAT_UI_OPTIONS = [
@@ -131,7 +168,48 @@ async def chroma_command(
     response = build_ansi_response(message, format.value, text_color.value, background_color.value, mobile_flag)
     await interaction.response.send_message(response, ephemeral=True)
 
-# --------------------- Section: Context Menu Command ---------------------
+# --------------------- Section: /translate Command ---------------------
+@tree.command(name="translate", description="Translate text to another language")
+@app_commands.describe(
+    text="The text to translate",
+    language="The language to translate to"
+)
+@app_commands.choices(language=LANGUAGE_OPTIONS)
+async def translate_command(
+    interaction: discord.Interaction, 
+    text: str,
+    language: app_commands.Choice[str]
+):
+    await interaction.response.defer(ephemeral=True)
+    result = await translate_text(text, language.value)
+    
+    if result["success"]:
+        detected_language = result["src_language"]
+        target_language = result["dest_language"]
+        
+        embed = discord.Embed(
+            title="Translation",
+            color=discord.Color.blue()
+        )
+        embed.add_field(
+            name=f"Original ({detected_language})",
+            value=result["original_text"],
+            inline=False
+        )
+        embed.add_field(
+            name=f"Translation ({target_language})",
+            value=result["translated_text"],
+            inline=False
+        )
+        
+        await interaction.followup.send(embed=embed, ephemeral=True)
+    else:
+        await interaction.followup.send(
+            f"Error translating: {result['error']}",
+            ephemeral=True
+        )
+
+# --------------------- Section: Context Menu Commands ---------------------
 @tree.context_menu(name="Colorize Text")
 async def colorize_context_menu(
     interaction: discord.Interaction, 
@@ -148,7 +226,7 @@ async def colorize_context_menu(
         ephemeral=True
     )
 
-# --------------------- Section: Custom View with Selects ---------------------
+# --------------------- Section: Colorize Custom View ---------------------
 class SelectionView(discord.ui.View):
     """
     A View containing four dropdown selects for Format, Background color,
