@@ -25,7 +25,7 @@ A Discord app that converts messages into colorful ANSI-formatted text blocks! P
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/lsalik2/chroma-text.git
+   git clone https://github.com/lsalik2/chromatext.git
    cd chroma-text
    ```
 
