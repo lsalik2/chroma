@@ -1,23 +1,19 @@
-### Section: Imports
 import os
 import discord
 from discord import app_commands
 
-### Section: Token Loading
-# Load Discord bot token
+# --------------------- Section: Token Loading ---------------------
 with open(".env", "r") as f:
     token_line = f.read().strip()
     TOKEN = token_line.split('=')[1]
 
-### Section: Options Choices
-# Format options
+# --------------------- Section: Options Choices ---------------------
 FORMAT_OPTIONS = [
     app_commands.Choice(name="Normal", value=0),
     app_commands.Choice(name="Bold", value=1),
     app_commands.Choice(name="Underline", value=4)
 ]
 
-# Text color options
 TEXT_COLORS = [
     app_commands.Choice(name="Grey", value=30),
     app_commands.Choice(name="Red", value=31),
@@ -29,7 +25,6 @@ TEXT_COLORS = [
     app_commands.Choice(name="White", value=37)
 ]
 
-# Background color options
 BACKGROUND_COLORS = [
     app_commands.Choice(name="Dark Blue", value=40),
     app_commands.Choice(name="Orange", value=41),
@@ -41,12 +36,12 @@ BACKGROUND_COLORS = [
     app_commands.Choice(name="White", value=47)
 ]
 
-### Section: Setup and Intents
+# --------------------- Section: Setup and Intents ---------------------
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
-### Section: Start-up Functions and Debugs
+# --------------------- Section: Start-up Functions and Debugs ---------------------
 @client.event
 async def on_ready():
     """When bot is connected and ready, triggers event"""
@@ -70,7 +65,7 @@ async def on_ready():
 
     print('Bot is ready!')
 
-### Section: /color Command
+# --------------------- Section: /color Command ---------------------
 @tree.command(name="color", description="Create a colorful ANSI code block")
 @app_commands.describe(
     message="The message to colorize",
@@ -93,8 +88,8 @@ async def color_command(
     
     """Command to create a colorful ANSI-formatted code block"""
     # Create ANSI formatted text
-    ansi_code = f"\u001b[{format.value};{text_color.value};{background_color.value}m"
-    reset_code = "\u001b[0m"
+    ansi_code = f"[{format.value};{text_color.value};{background_color.value}m"
+    reset_code = "[0m"
     
     # Format the response with the ANSI code block
     response = f"Here's your colorized message:\n```ansi\n{ansi_code}{message}{reset_code}\n```"
@@ -102,6 +97,6 @@ async def color_command(
     # Send the response as ephemeral (only visible to the command user)
     await interaction.response.send_message(response, ephemeral=True)
 
-# Run the client
+# --------------------- Section: Run the Client ---------------------
 if __name__ == "__main__":
     client.run(TOKEN)
