@@ -1,6 +1,6 @@
 # ChromaText 🌈
 
-<img src="logo.png" width="200" height="100">
+<img src="logo.png" width="400" height="400">
 
 A Discord app that converts messages into colorful ANSI-formatted text blocks! Perfect for making your important messages stand out or adding some flair to your Discord server.
 
