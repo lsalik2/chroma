@@ -3,7 +3,9 @@ import discord
 from discord import app_commands
 
 # Load Discord bot token
-TOKEN = os.getenv('DISCORD_TOKEN')
+with open(".env", "r") as f:
+    token_line = f.read().strip()
+    TOKEN = token_line.split('=')[1]
 
 # Format options
 FORMAT_OPTIONS = [
