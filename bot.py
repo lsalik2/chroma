@@ -36,6 +36,10 @@ BACKGROUND_COLORS = [
     app_commands.Choice(name="White", value=47)
 ]
 
+MOBILE_FRIENDLY_OPTIONS = [
+    app_commands.Choice(name="Yes", value="yes")
+]
+
 # --------------------- Section: Setup and Intents ---------------------
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)
@@ -71,35 +75,51 @@ async def on_ready():
     message="The message to colorize",
     format="Text formatting",
     background_color="The background color",
-    text_color="The color of the text"
+    text_color="The color of the text",
+    mobile_friendly="Mobile-friendly output?"
 )
 @app_commands.choices(
     format=FORMAT_OPTIONS,
     background_color=BACKGROUND_COLORS,
-    text_color=TEXT_COLORS
+    text_color=TEXT_COLORS,
+    mobile_friendly=MOBILE_FRIENDLY_OPTIONS
 )
 async def color_command(
     interaction: discord.Interaction, 
     message: str, 
     format: app_commands.Choice[int],
     background_color: app_commands.Choice[int],
-    text_color: app_commands.Choice[int]
+    text_color: app_commands.Choice[int],
+    mobile_friendly: app_commands.Choice[str] = None  # Optional parameter, defaults to None
 ):
     
     """Command to create a colorful ANSI-formatted code block"""
+    # Determine mobile-friendly option; default to "no" if not provided
+    mobile_friendly_value = mobile_friendly.value if mobile_friendly is not None else None
+
     # Create ANSI formatted text
     ansi_code = f"[{format.value};{text_color.value};{background_color.value}m"
     reset_code = "[0m"
     
-    # Format the response with colorized code block preview and raw text
-    response = (
-        "Here's your colorized message:\n"
-        f"```ansi\n{{ansi_code}}{{message}}{{reset_code}}\n```\n"
-        "Raw text for copy-pasting:\n"
-        "\`\`\`ansi\n"
-        f"{{ansi_code}}{{message}}{{reset_code}}\n"
-        "\`\`\`"
-    ).format(ansi_code=ansi_code, message=message, reset_code=reset_code)
+    # Build response if mobile_friendly option is Yes
+    if mobile_friendly_value == "yes":
+        # Mobile-friendly output: only the raw text for copy-pasting
+        response = (
+            "\`\`\`ansi\n"
+            f"{{ansi_code}}{{message}}{{reset_code}}\n"
+            "\`\`\`"
+        ).format(ansi_code=ansi_code, message=message, reset_code=reset_code)
+
+    else: 
+        # Format the response with colorized code block preview and raw text
+        response = (
+            "Here's your colorized message:\n"
+            f"```ansi\n{{ansi_code}}{{message}}{{reset_code}}\n```\n"
+            "Raw text for copy-pasting:\n"
+            "\`\`\`ansi\n"
+            f"{{ansi_code}}{{message}}{{reset_code}}\n"
+            "\`\`\`"
+        ).format(ansi_code=ansi_code, message=message, reset_code=reset_code)
     
     # Send the response as ephemeral (only visible to the command user)
     await interaction.response.send_message(response, ephemeral=True)
