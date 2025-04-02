@@ -118,6 +118,19 @@ TEXT_UI_OPTIONS = [
     discord.SelectOption(label="Yellow", value="33")
 ]
 
+LANGUAGE_UI_OPTIONS = [
+    discord.SelectOption(label="English", value="en"),
+    discord.SelectOption(label="Spanish", value="es"),
+    discord.SelectOption(label="French", value="fr"),
+    discord.SelectOption(label="German", value="de"),
+    discord.SelectOption(label="Italian", value="it"),
+    discord.SelectOption(label="Portuguese", value="pt"),
+    discord.SelectOption(label="Russian", value="ru"),
+    discord.SelectOption(label="Japanese", value="ja"),
+    discord.SelectOption(label="Chinese (Simplified)", value="zh-cn"),
+    discord.SelectOption(label="Arabic", value="ar")
+]
+
 # --------------------- Section: Setup and Intents ---------------------
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)
@@ -209,19 +222,36 @@ async def translate_command(
             ephemeral=True
         )
 
-# --------------------- Section: Context Menu Commands ---------------------
-@tree.context_menu(name="Colorize Text")
+# --------------------- Section: Colorize Context Menu ---------------------
+@tree.context_menu(name="Colorize")
 async def colorize_context_menu(
     interaction: discord.Interaction, 
     message: discord.Message
 ):
     """
     Context menu command that works on messages.
-    Right-click on a message -> Apps -> Colorize Text.
+    Right-click on a message -> Apps -> Colorize.
     """
     view = SelectionView(message.content if message.content else "Sample text")
     await interaction.response.send_message(
         content="Select below your format, background color, text color (and optionally, a mobile-friendly output), then click **Submit**.",
+        view=view,
+        ephemeral=True
+    )
+
+# --------------------- Section: Translate Context Menu ---------------------
+@tree.context_menu(name="Translate")
+async def translate_context_menu(
+    interaction: discord.Interaction,
+    message: discord.Message
+):
+    """
+    Context menu command for translation.
+    Right-click on a message -> Apps -> Translate.
+    """
+    view = TranslationView(message.content if message.content else "")
+    await interaction.response.send_message(
+        content="Select a language to translate to, then click **Submit**.",
         view=view,
         ephemeral=True
     )
@@ -321,6 +351,73 @@ class MobileFriendlySelect(discord.ui.Select):
         parent_view = self.view
         if isinstance(parent_view, SelectionView) and self.values:
             parent_view.mobile_friendly_value = self.values[0]
+        await interaction.response.defer()
+
+# --------------------- Section: Translate Custom View ---------------------
+class TranslationView(discord.ui.View):
+    """
+    A View containing a language dropdown select and a Submit button.
+    """
+    def __init__(self, message_text: str):
+        super().__init__(timeout=120)
+        self.message_text = message_text
+        
+        # Default target language
+        self.target_language = "en"
+        
+        self.add_item(LanguageSelect(row=0))
+    
+    @discord.ui.button(label="Submit", style=discord.ButtonStyle.green, row=1)
+    async def submit_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.defer(ephemeral=True)
+        
+        # Await the translation
+        result = await translate_text(self.message_text, self.target_language)
+        
+        # Delete the original response (the selection UI)
+        await interaction.delete_original_response()
+        
+        if result["success"]:
+            detected_language = result["src_language"]
+            target_language = result["dest_language"]
+            
+            embed = discord.Embed(
+                title="Translation",
+                color=discord.Color.blue()
+            )
+            embed.add_field(
+                name=f"Original ({detected_language})",
+                value=result["original_text"],
+                inline=False
+            )
+            embed.add_field(
+                name=f"Translation ({target_language})",
+                value=result["translated_text"],
+                inline=False
+            )
+            
+            await interaction.followup.send(embed=embed, ephemeral=True)
+        else:
+            await interaction.followup.send(
+                f"Error translating: {result['error']}",
+                ephemeral=True
+            )
+        self.stop()
+
+class LanguageSelect(discord.ui.Select):
+    def __init__(self, row: int = 0):
+        super().__init__(
+            placeholder="Select a language to translate to...",
+            min_values=1,
+            max_values=1,
+            options=LANGUAGE_UI_OPTIONS,
+            row=row
+        )
+
+    async def callback(self, interaction: discord.Interaction):
+        parent_view = self.view
+        if isinstance(parent_view, TranslationView):
+            parent_view.target_language = self.values[0]
         await interaction.response.defer()
 
 # --------------------- Section: Token Loading ---------------------
