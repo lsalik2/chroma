@@ -135,6 +135,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+DISCORD_TOKEN.env
 
 # Spyder project settings
 .spyderproject
