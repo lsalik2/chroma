@@ -23,3 +23,15 @@ TEXT_COLORS = [
     app_commands.Choice(name="Cyan", value=36),
     app_commands.Choice(name="White", value=37)
 ]
+
+# Background color options
+BACKGROUND_COLORS = [
+    app_commands.Choice(name="Dark Blue", value=40),
+    app_commands.Choice(name="Orange", value=41),
+    app_commands.Choice(name="Dark Grey", value=42),
+    app_commands.Choice(name="Grey", value=43),
+    app_commands.Choice(name="Light Grey", value=44),
+    app_commands.Choice(name="Indigo", value=45),
+    app_commands.Choice(name="Silver", value=46),
+    app_commands.Choice(name="White", value=47)
+]
