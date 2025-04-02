@@ -48,9 +48,7 @@ You can easily add ChromaText to your apps or server by clicking [here](https://
    - Go to [Discord Developer Portal](https://discord.com/developers/applications)
    - Create a new application
    - Add a bot to your application
-   - Under the "Bot" tab, enable:
-     - Message Content Intent
-   - Copy your bot token
+   - Copy your bot token under the "Bot" tab
 
 4. **Configure environment variables**
    - Create a `.env` file in the project directory
