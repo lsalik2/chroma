@@ -35,3 +35,8 @@ BACKGROUND_COLORS = [
     app_commands.Choice(name="Silver", value=46),
     app_commands.Choice(name="White", value=47)
 ]
+
+# Discord client setup
+intents = discord.Intents.default()
+client = discord.Client(intents=intents)
+tree = app_commands.CommandTree(client)
