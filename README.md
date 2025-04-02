@@ -88,31 +88,19 @@ Use the `/chroma` command with the following parameters:
 2. Select Apps > Colorize Text
 3. Choose your formatting options from the dropdown menus
 4. Click "Submit"
-5. The selection UI will disappear and be replaced with your colorized text
 
 ## ANSI Colors Reference
 
-### Text Colors
-
-- Blue (34)
-- Cyan (36)
-- Green (32)
-- Grey (30)
-- Pink (35)
-- Red (31)
-- White (37)
-- Yellow (33)
-
-### Background Colors
-
-- Dark Blue (40)
-- Dark Grey (42)
-- Grey (43)
-- Indigo (45)
-- Light Grey (44)
-- Orange (41)
-- Silver (46)
-- White (47)
+| Formats       | Text Colors | Background Colors |
+|---------------|-------------|-------------------|
+| Normal (0)    | Grey (30)   | Dark Blue (40)    |
+| Bold (1)      | Red (31)    | Orange (41)       |
+| Underline (4) | Green (32)  | Dark Grey (42)    |
+|               | Yellow (33) | Grey (43)         |
+|               | Blue (34)   | Light Grey (44)   |
+|               | Pink (35)   | Indigo (45)       |
+|               | Cyan (36)   | Silver (46)       |
+|               | White (37)  | White (47)        |
 
 ## Contributing
 
