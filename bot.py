@@ -48,7 +48,7 @@ async def translate_text(text: str, dest_language: str) -> dict:
             "error": str(e),
             "original_text": text
         }
-    
+
 def randomize_format(message: str, mobile_friendly: bool = False) -> str:
     '''
     Randomizes the ANSI formatted response.
@@ -247,8 +247,8 @@ async def translate_command(
             ephemeral=True
         )
 
-# --------------------- Section: Randomize Format ---------------------
-@tree.command(name="randomize", description="Generate random colorful ANSI code block")
+# --------------------- Section: /random Command ---------------------
+@tree.command(name="random", description="Generate random colorful ANSI code block")
 @app_commands.describe(
     message="The message to colorize",
     mobile_friendly="Mobile-friendly copy-paste output")
