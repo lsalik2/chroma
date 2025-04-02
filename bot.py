@@ -40,3 +40,13 @@ BACKGROUND_COLORS = [
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
+
+@client.event
+async def on_ready():
+    """When bot is connected and ready, triggers event"""
+    print(f'Logged in as {client.user} (ID: {client.user.id})')
+    print('------')
+    
+    # Sync commands with Discord
+    await tree.sync()
+    print("Slash commands synced")
