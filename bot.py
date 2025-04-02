@@ -1,12 +1,15 @@
+### Section: Imports
 import os
 import discord
 from discord import app_commands
 
+### Section: Token Loading
 # Load Discord bot token
 with open(".env", "r") as f:
     token_line = f.read().strip()
     TOKEN = token_line.split('=')[1]
 
+### Section: Options Choices
 # Format options
 FORMAT_OPTIONS = [
     app_commands.Choice(name="Normal", value=0),
@@ -38,11 +41,12 @@ BACKGROUND_COLORS = [
     app_commands.Choice(name="White", value=47)
 ]
 
-# Discord client setup
+### Section: Setup and Intents
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
+### Section: Start-up Functions and Debugs
 @client.event
 async def on_ready():
     """When bot is connected and ready, triggers event"""
@@ -65,6 +69,38 @@ async def on_ready():
     await client.change_presence(activity=activity)
 
     print('Bot is ready!')
+
+### Section: /color Command
+@tree.command(name="color", description="Create a colorful ANSI code block")
+@app_commands.describe(
+    message="The message to colorize",
+    format="Text formatting",
+    background_color="The background color",
+    text_color="The color of the text"
+)
+@app_commands.choices(
+    format=FORMAT_OPTIONS,
+    background_color=BACKGROUND_COLORS,
+    text_color=TEXT_COLORS
+)
+async def color_command(
+    interaction: discord.Interaction, 
+    message: str, 
+    format: app_commands.Choice[int],
+    background_color: app_commands.Choice[int],
+    text_color: app_commands.Choice[int]
+):
+    
+    """Command to create a colorful ANSI-formatted code block"""
+    # Create ANSI formatted text
+    ansi_code = f"\u001b[{format.value};{text_color.value};{background_color.value}m"
+    reset_code = "\u001b[0m"
+    
+    # Format the response with the ANSI code block
+    response = f"Here's your colorized message:\n```ansi\n{ansi_code}{message}{reset_code}\n```"
+    
+    # Send the response as ephemeral (only visible to the command user)
+    await interaction.response.send_message(response, ephemeral=True)
 
 # Run the client
 if __name__ == "__main__":
