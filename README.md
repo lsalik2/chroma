@@ -2,12 +2,12 @@
 <img src="gh_banner.png">
 </p>
 
+A Discord utility app that can convert messages into colorful ANSI-formatted text blocks, translates messages between languages, and more! Perfect for making your important messages stand out, adding some flair to your Discord server, or communicating with users who speak different languages.
+
 <p align="center">
 <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
 <a href="https://discord.com/oauth2/authorize?client_id=1356766929800532281"><img src="https://img.shields.io/badge/Add_it_on_Discord!-Invite-7289da?logo=discord&logoColor=ffffff" alt="Add it on Discord! - Invite"></a>
 </p>
-
-A Discord utility app that can convert messages into colorful ANSI-formatted text blocks, translates messages between languages, and more! Perfect for making your important messages stand out, adding some flair to your Discord server, or communicating with users who speak different languages.
 
 ## Features
 
