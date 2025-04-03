@@ -180,7 +180,7 @@ async def on_ready():
     print('Bot is ready!')
 
 # --------------------- Section: /chroma Command ---------------------
-@tree.command(name="chroma", description="Create a colorful ANSI code block")
+@tree.command(name="chroma", description="🌈 Create a colorful ANSI code block")
 @app_commands.describe(
     message="The message to colorize",
     format="Text formatting",
@@ -207,7 +207,7 @@ async def chroma_command(
     await interaction.response.send_message(response, ephemeral=True)
 
 # --------------------- Section: /translate Command ---------------------
-@tree.command(name="translate", description="Translate text to another language")
+@tree.command(name="translate", description="🔡 Translate text to another language")
 @app_commands.describe(
     text="The text to translate",
     language="The language to translate to"
@@ -248,14 +248,12 @@ async def translate_command(
         )
 
 # --------------------- Section: /random Command ---------------------
-@tree.command(name="random", description="Generate random colorful ANSI code block")
+@tree.command(name="random", description="🪅 Generate random colorful ANSI code block")
 @app_commands.describe(
     message="The message to colorize",
     mobile_friendly="Mobile-friendly copy-paste output")
-
 @app_commands.choices(
     mobile_friendly=[app_commands.Choice(name="Yes", value="yes")])
-
 async def randomize_command(
     interaction: discord.Interaction, 
     message: str, 
