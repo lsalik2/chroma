@@ -1,5 +1,5 @@
 <p align="center">
-<img src="banner.png">
+<img src="gh_banner.png">
 </p>
 
 <p align="center">
