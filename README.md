@@ -26,7 +26,7 @@ A Discord utility app that can convert messages into colorful ANSI-formatted tex
 
 ## Installation
 
-You can easily add ChromaText to your apps or server by clicking [here](https://discord.com/oauth2/authorize?client_id=1356766929800532281). However, if you're interested in contributing, or maybe creating your own version of ChromaText, then you can do so by following the guide below.
+You can easily add Chroma to your apps or server by clicking [here](https://discord.com/oauth2/authorize?client_id=1356766929800532281). However, if you're interested in contributing, or maybe creating your own version of Chroma, then you can do so by following the guide below.
 
 ### Requirements
 
@@ -40,8 +40,8 @@ You can easily add ChromaText to your apps or server by clicking [here](https://
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/lsalik2/chromatext.git
-   cd chromatext
+   git clone https://github.com/lsalik2/chroma.git
+   cd chroma
    ```
 
 2. **Install dependencies**
@@ -160,7 +160,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [A guide to ANSI on Discord](https://gist.github.com/kkrypt0nn/a02506f3712ff2d1c8ca7c9e0aed7c06#text-colors) by kkrypt0nn
 - The Discord.py team for their excellent library
 - The googletrans library for translation functionality
-- All contributors who help improve ChromaText
+- All contributors who help improve Chroma
 
 ## Support
 
