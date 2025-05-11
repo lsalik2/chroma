@@ -1,5 +1,7 @@
 import asyncio
 
+from utils.tournament_db import TournamentDatabase
+
 class TournamentScheduler:
     """Handles scheduled tasks for tournaments like reminders and auto-starting matches"""
     
@@ -26,3 +28,25 @@ class TournamentScheduler:
                 task.cancel()
         
         self.scheduled_tasks = {}
+    
+    async def _scheduler_loop(self):
+        """Main scheduler loop that checks for scheduled actions"""
+        while self.running:
+            try:
+                # Get all active tournaments
+                tournaments = TournamentDatabase.get_active_tournaments()
+                
+                for tournament in tournaments:
+                    # Process reminders
+                    await self._process_tournament_reminders(tournament)
+                    
+                    # If tournament is started but not ended, check for timed forfeit
+                    if tournament.started_at and not tournament.ended_at:
+                        await self._process_match_timeouts(tournament)
+                
+                # Sleep for a bit before checking again
+                await asyncio.sleep(60)  # Check every minute
+            
+            except Exception as e:
+                print(f"Error in scheduler loop: {e}")
+                await asyncio.sleep(60)  # Still sleep on errors
