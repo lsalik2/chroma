@@ -475,7 +475,7 @@ class PlayerSignupModal(Modal):
             if self.tournament.format == TournamentFormat.CHOOSE:
                 await interaction.response.send_message(
                     "Would you like to create a new team or join an existing team?",
-                    view=TeamChoiceView(self.tournament, player), # will add later
+                    view=TeamChoiceView(self.tournament, player),
                     ephemeral=True
                 )
             else:
@@ -532,3 +532,10 @@ class PlayerSignupModal(Modal):
             embed=embed,
             view=TeamApprovalView(self.tournament, team.id) # will add later
         )
+
+
+class TeamChoiceView(View):
+    def __init__(self, tournament: Tournament, player: Player):
+        super().__init__()
+        self.tournament = tournament
+        self.player = player  # Store the player object directly
