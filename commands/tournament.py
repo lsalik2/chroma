@@ -361,7 +361,16 @@ class TournamentConfirmView(View):
                     f"- Admins have final say in all disputes\n\n"
                     f"{prize_section}"
                 )
-
+            
+            if tournament.bracket_channel_id:
+                channel = guild.get_channel(tournament.bracket_channel_id)
+                await channel.send(
+                    f"# 🏆 Tournament Bracket 🏆\n\n"
+                    f"The bracket will be displayed here once the tournament begins.\n\n"
+                    f"## Registered Teams\n"
+                    f"Teams will be listed here after registration and approval."
+                )
+            
 
         except Exception as e:
             print(f"Error creating tournament: {e}")
