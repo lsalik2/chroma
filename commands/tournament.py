@@ -900,3 +900,11 @@ class StartTournamentView(View):
     def __init__(self, tournament: Tournament):
         super().__init__()
         self.tournament = tournament
+    
+    @discord.ui.button(label="Start Tournament", style=ButtonStyle.green, row=0)
+    async def start_button(self, interaction: Interaction, button: Button):
+        # Check if there are enough teams
+        approved_teams = self.tournament.get_approved_teams()
+        if len(approved_teams) < 2:
+            await interaction.response.send_message("Need at least 2 approved teams to start the tournament.", ephemeral=True)
+            return
