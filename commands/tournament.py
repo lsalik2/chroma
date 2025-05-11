@@ -773,3 +773,10 @@ class TeamPasswordModal(Modal):
         
         # Save tournament
         TournamentDatabase.save_tournament(self.tournament)
+        
+        # Notify team captain
+        try:
+            captain = await interaction.client.fetch_user(self.team.captain_id)
+            await captain.send(f"**{self.player.username}** has joined your team **{self.team.name}** for the tournament **{self.tournament.name}**!")
+        except:
+            pass  # Ignore if DM fails
