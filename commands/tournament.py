@@ -1,3 +1,4 @@
+from discord import TextStyle
 from discord.ui import Modal, TextInput
 
 # Constants
@@ -56,3 +57,12 @@ class TournamentCreateModal(Modal):
             default="7"
         )
         self.add_item(self.registration_deadline)
+        
+        self.prize_info = TextInput(
+            label="Prizes (Optional)",
+            placeholder="Describe tournament prizes",
+            required=False,
+            max_length=1000,
+            style=TextStyle.paragraph
+        )
+        self.add_item(self.prize_info)
