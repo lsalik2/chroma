@@ -4,7 +4,7 @@ import discord
 from discord import Interaction, ButtonStyle, Button, SelectOption
 from discord.ui import Modal, TextInput, View, Select
 
-from models.tournament import TournamentFormat
+from models.tournament import TournamentFormat, Tournament
 
 # Constants
 CHANNEL_EMOJI_MAP = {
@@ -201,3 +201,14 @@ class TournamentConfirmView(View):
         await interaction.response.defer(ephemeral=True)
         
         data = self.tournament_data
+        
+        # Create Tournament object
+        tournament = Tournament(
+            name=data["name"],
+            format=data["format"],
+            creator_id=interaction.user.id,
+            team_size=data["team_size"],
+            max_teams=data["max_teams"],
+            registration_deadline=data["registration_deadline"],
+            prize_info=data["prize_info"]
+        )
