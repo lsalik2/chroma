@@ -201,3 +201,9 @@ class TournamentScheduler:
             next_match = tournament.advance_match(match.id, match.team1_id)
             TournamentDatabase.save_tournament(tournament)
             return
+
+# This function will be called from the main bot.py to start the scheduler
+async def start_tournament_scheduler(bot):
+    scheduler = TournamentScheduler(bot)
+    await scheduler.start()
+    return scheduler
