@@ -413,3 +413,8 @@ class TournamentConfirmView(View):
 
 
 # ---------------- Player Signup Views and Modals ----------------
+
+class PlayerSignupModal(Modal):
+    def __init__(self, tournament: Tournament):
+        super().__init__(title=f"Sign up for {tournament.name}")
+        self.tournament = tournament
