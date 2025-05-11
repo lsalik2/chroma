@@ -683,3 +683,7 @@ class TeamSelectView(View):
     async def on_team_select(self, interaction: Interaction):
         team_id = self.teams_select.values[0]
         team = self.tournament.get_team(team_id)
+        
+        if not team:
+            await interaction.response.send_message("Team not found.", ephemeral=True)
+            return
