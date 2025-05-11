@@ -687,3 +687,10 @@ class TeamSelectView(View):
         if not team:
             await interaction.response.send_message("Team not found.", ephemeral=True)
             return
+        
+        # Check if team requires a password
+        if team.password:
+            await interaction.response.send_modal(TeamPasswordModal(self.tournament, team, self.player)) # will add later
+        else:
+            # Join team without password
+            await self.join_team(interaction, team)
