@@ -31,3 +31,11 @@ class TournamentCreateModal(Modal):
             max_length=100
         )
         self.add_item(self.name)
+        
+        self.team_size = TextInput(
+            label="Team Size",
+            placeholder="Number of players per team (e.g. 2 for 2v2)",
+            required=True,
+            max_length=1
+        )
+        self.add_item(self.team_size)
