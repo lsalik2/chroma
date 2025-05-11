@@ -15,3 +15,11 @@ class MatchStatus(Enum):
     IN_PROGRESS = "playing" # Match in progress
     COMPLETED = "completed" # Match completed
     FORFEIT = "forfeit"     # Match forfeited
+
+class Player:
+    def __init__(self, user_id: int, username: str, epic_username: str, current_mmr: int, peak_mmr: int):
+        self.user_id = user_id
+        self.username = username
+        self.epic_username = epic_username
+        self.current_mmr = current_mmr
+        self.peak_mmr = peak_mmr
