@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
 
 import discord
-from discord import Interaction, ButtonStyle, Button
-from discord.ui import Modal, TextInput, View
+from discord import Interaction, ButtonStyle, Button, SelectOption
+from discord.ui import Modal, TextInput, View, Select
 
 from models.tournament import TournamentFormat
 
@@ -151,3 +151,20 @@ class TournamentChannelsView(View):
     def __init__(self, tournament_data):
         super().__init__()
         self.tournament_data = tournament_data
+        
+        # Add checkboxes for each channel type
+        self.channels_select = Select(
+            placeholder="Select channels to create...",
+            min_values=0,
+            max_values=6,
+            options=[
+                SelectOption(
+                    label=f"{emoji} {name.capitalize()}",
+                    value=name,
+                    description=f"{emoji} {name.capitalize()} channel"
+                )
+                for name, emoji in CHANNEL_EMOJI_MAP.items()
+            ]
+        )
+        self.channels_select.callback = self.on_select
+        self.add_item(self.channels_select)
