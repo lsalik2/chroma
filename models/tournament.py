@@ -124,3 +124,6 @@ class Match:
         self.lobby_name = None
         self.lobby_password = None
         self.checked_in = {team1_id: False, team2_id: False}
+    
+    def record_vote(self, user_id: int, team_id: str) -> None:
+        self.votes[user_id] = team_id
