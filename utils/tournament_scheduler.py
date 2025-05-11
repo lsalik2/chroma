@@ -143,3 +143,61 @@ class TournamentScheduler:
             f"{reminder['message']}\n\n"
             f"{mentions_text}"
         )
+    
+    async def _handle_match_forfeit(self, tournament: Tournament, match):
+        """Handle forfeits for matches where teams didn't check in"""
+        # Get channel
+        if not match.channel_id:
+            return
+        
+        channel = self.bot.get_channel(match.channel_id)
+        if not channel:
+            return
+        
+        # Determine which team(s) forfeited
+        team1_checked_in = match.checked_in.get(match.team1_id, False)
+        team2_checked_in = match.checked_in.get(match.team2_id, False)
+        
+        # Both teams forfeited
+        if not team1_checked_in and not team2_checked_in:
+            await channel.send(
+                f"# ⚠️ Both teams have forfeited! ⚠️\n\n"
+                f"Neither team checked in within the time limit."
+            )
+            
+            # No winner, both teams eliminated
+            match.status = "forfeit"
+            TournamentDatabase.save_tournament(tournament)
+            return
+        
+        # Team 1 forfeited
+        if not team1_checked_in and team2_checked_in:
+            team1 = tournament.get_team(match.team1_id)
+            team2 = tournament.get_team(match.team2_id)
+            
+            await channel.send(
+                f"# ⚠️ Team Forfeit ⚠️\n\n"
+                f"**{team1.name}** has forfeited for not checking in within the time limit.\n"
+                f"**{team2.name}** wins by default!"
+            )
+            
+            # Advance team 2
+            next_match = tournament.advance_match(match.id, match.team2_id)
+            TournamentDatabase.save_tournament(tournament)
+            return
+        
+        # Team 2 forfeited
+        if team1_checked_in and not team2_checked_in:
+            team1 = tournament.get_team(match.team1_id)
+            team2 = tournament.get_team(match.team2_id)
+            
+            await channel.send(
+                f"# ⚠️ Team Forfeit ⚠️\n\n"
+                f"**{team2.name}** has forfeited for not checking in within the time limit.\n"
+                f"**{team1.name}** wins by default!"
+            )
+            
+            # Advance team 1
+            next_match = tournament.advance_match(match.id, match.team1_id)
+            TournamentDatabase.save_tournament(tournament)
+            return
