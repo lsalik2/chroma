@@ -420,3 +420,72 @@ class Tournament:
         if not self.winner_id:
             return None
         return self.teams.get(self.winner_id)
+    
+    def to_dict(self):
+        """Convert tournament to dictionary for storage"""
+        return {
+            "id": self.id,
+            "name": self.name,
+            "format": self.format.value,
+            "creator_id": self.creator_id,
+            "team_size": self.team_size,
+            "max_teams": self.max_teams,
+            "registration_deadline": self.registration_deadline.isoformat() if self.registration_deadline else None,
+            "prize_info": self.prize_info,
+            "teams": {tid: team.to_dict() for tid, team in self.teams.items()},
+            "matches": {mid: match.to_dict() for mid, match in self.matches.items()},
+            "created_at": self.created_at.isoformat(),
+            "started_at": self.started_at.isoformat() if self.started_at else None,
+            "ended_at": self.ended_at.isoformat() if self.ended_at else None,
+            "is_active": self.is_active,
+            "bracket_channel_id": self.bracket_channel_id,
+            "announcement_channel_id": self.announcement_channel_id,
+            "admin_channel_id": self.admin_channel_id,
+            "signup_channel_id": self.signup_channel_id,
+            "rules_channel_id": self.rules_channel_id,
+            "lobby_channel_id": self.lobby_channel_id,
+            "questions_channel_id": self.questions_channel_id,
+            "category_id": self.category_id,
+            "reminders": self.reminders,
+            "winner_id": self.winner_id
+        }
+    
+    @classmethod
+    def from_dict(cls, data):
+        """Create tournament from dictionary"""
+        tournament = cls(
+            name=data["name"],
+            format=TournamentFormat(data["format"]),
+            creator_id=data["creator_id"],
+            team_size=data["team_size"],
+            max_teams=data["max_teams"],
+            registration_deadline=datetime.fromisoformat(data["registration_deadline"]) if data["registration_deadline"] else None,
+            prize_info=data["prize_info"]
+        )
+        
+        tournament.id = data["id"]
+        
+        # Load teams
+        for team_id, team_data in data["teams"].items():
+            tournament.teams[team_id] = Team.from_dict(team_data)
+        
+        # Load matches
+        for match_id, match_data in data["matches"].items():
+            tournament.matches[match_id] = Match.from_dict(match_data)
+        
+        tournament.created_at = datetime.fromisoformat(data["created_at"])
+        tournament.started_at = datetime.fromisoformat(data["started_at"]) if data["started_at"] else None
+        tournament.ended_at = datetime.fromisoformat(data["ended_at"]) if data["ended_at"] else None
+        tournament.is_active = data["is_active"]
+        tournament.bracket_channel_id = data["bracket_channel_id"]
+        tournament.announcement_channel_id = data["announcement_channel_id"]
+        tournament.admin_channel_id = data["admin_channel_id"]
+        tournament.signup_channel_id = data["signup_channel_id"]
+        tournament.rules_channel_id = data["rules_channel_id"]
+        tournament.lobby_channel_id = data["lobby_channel_id"]
+        tournament.questions_channel_id = data["questions_channel_id"]
+        tournament.category_id = data["category_id"]
+        tournament.reminders = data["reminders"]
+        tournament.winner_id = data["winner_id"]
+        
+        return tournament
