@@ -780,3 +780,22 @@ class TeamPasswordModal(Modal):
             await captain.send(f"**{self.player.username}** has joined your team **{self.team.name}** for the tournament **{self.tournament.name}**!")
         except:
             pass  # Ignore if DM fails
+        
+        # Send admin approval message update
+        admin_channel = interaction.guild.get_channel(self.tournament.admin_channel_id)
+        if admin_channel:
+            player_list = "\n".join([
+                f"- **{p.username}** (Epic: {p.epic_username}, MMR: {p.current_mmr}/{p.peak_mmr})"
+                for p in self.team.players
+            ])
+            
+            embed = discord.Embed(
+                title=f"Team Update: {self.team.name}",
+                description=f"A new player has joined team {self.team.name}.",
+                color=discord.Color.blue()
+            )
+            embed.add_field(name="Players", value=player_list, inline=False)
+            embed.add_field(name="Team Captain", value=f"<@{self.team.captain_id}>", inline=True)
+            embed.add_field(name="Avg MMR", value=f"{self.team.calculate_average_mmr():.1f}", inline=True)
+            
+            await admin_channel.send(embed=embed)
