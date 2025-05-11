@@ -23,3 +23,22 @@ class Player:
         self.epic_username = epic_username
         self.current_mmr = current_mmr
         self.peak_mmr = peak_mmr
+
+    def to_dict(self):
+        return {
+            "user_id": self.user_id,
+            "username": self.username,
+            "epic_username": self.epic_username,
+            "current_mmr": self.current_mmr,
+            "peak_mmr": self.peak_mmr
+        }
+    
+    @classmethod
+    def from_dict(cls, data):
+        return cls(
+            user_id=data["user_id"],
+            username=data["username"],
+            epic_username=data["epic_username"],
+            current_mmr=data["current_mmr"],
+            peak_mmr=data["peak_mmr"]
+        )
