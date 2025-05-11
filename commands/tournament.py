@@ -845,3 +845,18 @@ class TeamApprovalView(View):
     @discord.ui.button(label="Deny", style=ButtonStyle.red, row=0)
     async def deny_button(self, interaction: Interaction, button: Button):
         await interaction.response.send_modal(TeamDenialModal(self.tournament, self.team_id))
+
+
+class TeamDenialModal(Modal):
+    def __init__(self, tournament: Tournament, team_id: str):
+        super().__init__(title="Deny Team")
+        self.tournament = tournament
+        self.team_id = team_id
+        
+        self.reason = TextInput(
+            label="Reason for Denial",
+            placeholder="Why is this team being denied?",
+            required=True,
+            style=discord.TextStyle.paragraph
+        )
+        self.add_item(self.reason)
