@@ -585,3 +585,10 @@ class CreateTeamModal(Modal):
             max_length=50
         )
         self.add_item(self.team_password)
+    
+    async def on_submit(self, interaction: Interaction):
+        # Check for existing teams with the same name
+        existing_teams = []
+        for team in self.tournament.teams.values():
+            if team.name.lower() == self.team_name.value.lower():
+                existing_teams.append(team)
