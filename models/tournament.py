@@ -360,3 +360,7 @@ class Tournament:
     def get_pending_matches(self) -> List[Match]:
         """Get all pending matches"""
         return [m for m in self.matches.values() if m.status == MatchStatus.PENDING]
+    
+    def get_match(self, match_id: str) -> Optional[Match]:
+        """Get a match by ID"""
+        return self.matches.get(match_id)
