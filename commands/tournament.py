@@ -187,3 +187,8 @@ class TournamentConfirmView(View):
     def __init__(self, tournament_data):
         super().__init__()
         self.tournament_data = tournament_data
+    
+    @discord.ui.button(label="Confirm", style=ButtonStyle.green, row=0)
+    async def confirm_button(self, interaction: Interaction, button: Button):
+        # Create the tournament
+        await self.create_tournament(interaction)
