@@ -700,3 +700,8 @@ class TeamSelectView(View):
         if len(team.players) >= self.tournament.team_size:
             await interaction.response.send_message("This team is already full.", ephemeral=True)
             return
+        
+        # Add player to team
+        if not team.add_player(self.player):  # Use the stored player object
+            await interaction.response.send_message("You are already on this team.", ephemeral=True)
+            return
