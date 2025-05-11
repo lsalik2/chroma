@@ -332,7 +332,35 @@ class TournamentConfirmView(View):
                     f"**Max Teams:** {tournament.max_teams if tournament.max_teams else 'No limit'}\n\n"
                     f"{prize_text}"
                 )
-
+            
+            if tournament.rules_channel_id:
+                channel = guild.get_channel(tournament.rules_channel_id)
+                prize_section = ""
+                if tournament.prize_info:
+                    prize_section = f"## Prizes\n{tournament.prize_info}"
+                
+                team_formation = "Players choose their own teams"
+                if tournament.format != TournamentFormat.CHOOSE:
+                    team_formation = "Teams will be automatically formed by the bot"
+                
+                await channel.send( # TODO add a dynamic rules list or something?
+                    f"# 📜 Tournament Rules and Format 📜\n\n"
+                    f"## Format\n"
+                    f"- **Tournament Name:** {tournament.name}\n"
+                    f"- **Team Size:** {tournament.team_size}v{tournament.team_size}\n"
+                    f"- **Teams:** {tournament.format.value.capitalize()} format\n"
+                    f"- **Registration Deadline:** <t:{int(tournament.registration_deadline.timestamp())}:F>\n\n"
+                    f"## Team Formation\n"
+                    f"- {team_formation}\n"
+                    f"- All players must register with their Epic username and MMR\n"
+                    f"- Teams must be approved by admins before participating\n\n"
+                    f"## Match Rules\n"
+                    f"- Standard Rocket League rules apply\n"
+                    f"- Matches are best-of-3\n"
+                    f"- No toxic behavior or cheating\n"
+                    f"- Admins have final say in all disputes\n\n"
+                    f"{prize_section}"
+                )
 
 
         except Exception as e:
