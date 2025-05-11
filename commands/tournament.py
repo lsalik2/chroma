@@ -880,3 +880,15 @@ class TeamDenialModal(Modal):
             content=f"**Team {team.name} has been denied.**\nReason: {self.reason.value}",
             view=None
         )
+        
+        # Notify team members
+        for player in team.players:
+            try:
+                user = await interaction.client.fetch_user(player.user_id)
+                await user.send(
+                    f"Your team **{team.name}** has been denied for the tournament **{self.tournament.name}**.\n\n"
+                    f"Reason: {self.reason.value}\n\n"
+                    f"You can sign up again by using the `/signup` command in the tournament sign-up channel and addressing the reason for denial."
+                )
+            except:
+                pass  # Ignore if DM fails
