@@ -734,3 +734,8 @@ class TeamSelectView(View):
             embed.add_field(name="Avg MMR", value=f"{team.calculate_average_mmr():.1f}", inline=True)
             
             await admin_channel.send(embed=embed)
+        
+        await interaction.response.send_message(
+            f"You have joined team **{team.name}**! Your registration is pending admin approval.",
+            ephemeral=True
+        )
