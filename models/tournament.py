@@ -80,3 +80,29 @@ class Team:
         
         # Weight current MMR 70%, peak MMR 30%
         return (total_current * 0.7 + total_peak * 0.3) / len(self.players)
+    
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "captain_id": self.captain_id,
+            "password": self.password,
+            "players": [p.to_dict() for p in self.players],
+            "status": self.status.value,
+            "seeding": self.seeding,
+            "denial_reason": self.denial_reason
+        }
+    
+    @classmethod
+    def from_dict(cls, data):
+        team = cls(
+            name=data["name"],
+            captain_id=data["captain_id"],
+            password=data["password"]
+        )
+        team.id = data["id"]
+        team.players = [Player.from_dict(p) for p in data["players"]]
+        team.status = TeamStatus(data["status"])
+        team.seeding = data["seeding"]
+        team.denial_reason = data["denial_reason"]
+        return team
