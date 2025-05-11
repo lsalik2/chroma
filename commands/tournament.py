@@ -505,3 +505,7 @@ class PlayerSignupModal(Modal):
         except Exception as e:
             print(f"Error in signup: {e}")
             await interaction.response.send_message(f"An error occurred: {e}", ephemeral=True)
+    
+    async def send_admin_approval(self, interaction: Interaction, team: Team):
+        # Get admin channel
+        admin_channel = interaction.guild.get_channel(self.tournament.admin_channel_id)
