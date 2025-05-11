@@ -5,6 +5,7 @@ from discord import Interaction, ButtonStyle, Button, SelectOption
 from discord.ui import Modal, TextInput, View, Select
 
 from models.tournament import TournamentFormat, Tournament
+from utils.tournament_db import TournamentDatabase
 
 # Constants
 CHANNEL_EMOJI_MAP = {
@@ -304,6 +305,17 @@ class TournamentConfirmView(View):
                         read_messages=True,
                         send_messages=True
                     )
+            
+            admin_channel = await guild.create_text_channel(
+                name=f"⚙️admin-{tournament.name.lower().replace(' ', '-')}",
+                category=category,
+                overwrites=admin_overwrites
+            )
+            
+            tournament.admin_channel_id = admin_channel.id
+            
+            # Save the tournament to database
+            TournamentDatabase.save_tournament(tournament)
 
         except Exception as e:
             print(f"Error creating tournament: {e}")
