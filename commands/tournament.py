@@ -670,3 +670,12 @@ class TeamSelectView(View):
                     description=f"Captain: {captain[:100]}, Players: {players}"
                 )
             )
+        
+        self.teams_select = Select(
+            placeholder="Select a team to join...",
+            min_values=1,
+            max_values=1,
+            options=options[:25]  # Max 25 options
+        )
+        self.teams_select.callback = self.on_team_select
+        self.add_item(self.teams_select)
