@@ -820,3 +820,7 @@ class TeamApprovalView(View):
         if not team:
             await interaction.response.send_message("Team not found.", ephemeral=True)
             return
+        
+        # Approve the team
+        self.tournament.approve_team(self.team_id)
+        TournamentDatabase.save_tournament(self.tournament)
