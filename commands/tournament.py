@@ -434,3 +434,11 @@ class PlayerSignupModal(Modal):
             max_length=5
         )
         self.add_item(self.current_mmr)
+        
+        self.peak_mmr = TextInput(
+            label=f"Peak {tournament.team_size}v{tournament.team_size} MMR",
+            placeholder="Your highest MMR (estimate if needed)",
+            required=True,
+            max_length=5
+        )
+        self.add_item(self.peak_mmr)
