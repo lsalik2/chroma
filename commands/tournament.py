@@ -4,7 +4,7 @@ import discord
 from discord import Interaction, ButtonStyle, Button, SelectOption
 from discord.ui import Modal, TextInput, View, Select
 
-from models.tournament import TournamentFormat, Tournament
+from models.tournament import TournamentFormat, Tournament, Player
 from utils.tournament_db import TournamentDatabase
 
 # Constants
@@ -461,6 +461,15 @@ class PlayerSignupModal(Modal):
             if self.tournament.is_player_registered(interaction.user.id):
                 await interaction.response.send_message("You are already registered for this tournament.", ephemeral=True)
                 return
+            
+            # Create player
+            player = Player(
+                user_id=interaction.user.id,
+                username=str(interaction.user),
+                epic_username=self.epic_username.value,
+                current_mmr=current_mmr,
+                peak_mmr=peak_mmr
+            )
 
         except ValueError:
             await interaction.response.send_message("Please enter valid numbers for MMR values.", ephemeral=True)
