@@ -290,3 +290,65 @@ class Tournament:
         # Assign seeding numbers (1 = highest seed)
         for i, team in enumerate(sorted_teams):
             team.seeding = i + 1
+    
+    def create_matches(self) -> List[Match]:
+        """Create first round matches for the tournament"""
+        approved_teams = self.get_approved_teams()
+        
+        # Calculate seedings first
+        self.calculate_seedings()
+        
+        # Sort teams by seeding (lowest number = highest seed)
+        sorted_teams = sorted(approved_teams, key=lambda t: t.seeding)
+        
+        new_matches = []
+        
+        # Create first round matches
+        num_teams = len(sorted_teams)
+        num_byes = 0
+        
+        # Calculate number of byes needed for the first round
+        # to make the tournament bracket work properly
+        next_power_of_2 = 1
+        while next_power_of_2 < num_teams:
+            next_power_of_2 *= 2
+            
+        num_byes = next_power_of_2 - num_teams
+        
+        # Create matches for first round
+        match_number = 1
+        team_index = 0
+        
+        while team_index < num_teams:
+            # If odd number of teams left or we need to give byes,
+            # give bye to highest seed
+            if team_index == num_teams - 1 or num_byes > 0:
+                # Create a "bye" match
+                team = sorted_teams[team_index]
+                match_id = f"match_{self.id}_{1}_{match_number}"
+                
+                # Create match with None as opponent, will be handled specially
+                match = Match(match_id, team.id, None, 1, match_number)
+                match.winner_id = team.id  # Auto-win
+                match.status = MatchStatus.COMPLETED
+                
+                self.matches[match_id] = match
+                new_matches.append(match)
+                
+                team_index += 1
+                num_byes -= 1
+            else:
+                team1 = sorted_teams[team_index]
+                team2 = sorted_teams[team_index + 1]
+                
+                match_id = f"match_{self.id}_{1}_{match_number}"
+                match = Match(match_id, team1.id, team2.id, 1, match_number)
+                
+                self.matches[match_id] = match
+                new_matches.append(match)
+                
+                team_index += 2
+            
+            match_number += 1
+        
+        return new_matches
