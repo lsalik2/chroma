@@ -648,3 +648,11 @@ class CreateTeamModal(Modal):
             f"Share this password with your teammates so they can join your team.",
             ephemeral=True
         )
+
+
+class TeamSelectView(View):
+    def __init__(self, tournament: Tournament, player: Player, available_teams: List[Team]):
+        super().__init__()
+        self.tournament = tournament
+        self.player = player  # Store the player object directly
+        self.available_teams = available_teams
