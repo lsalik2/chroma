@@ -386,7 +386,20 @@ class TournamentConfirmView(View):
                     f"- Your peak {tournament.team_size}v{tournament.team_size} MMR\n\n"
                     f"{team_info}"
                 )
-
+            
+            # Send admin welcome message
+            await admin_channel.send(
+                f"# ⚙️ Tournament Admin Controls ⚙️\n\n"
+                f"Welcome to the admin channel for **{tournament.name}**!\n\n"
+                f"Use the following commands to manage the tournament:\n"
+                f"- `/tournament approve` - Approve a team\n"
+                f"- `/tournament deny` - Deny a team\n"
+                f"- `/tournament start` - Start the tournament\n"
+                f"- `/tournament bracket` - Update the bracket display\n"
+                f"- `/tournament reminder` - Schedule a reminder\n"
+                f"- `/tournament edit` - Edit tournament details\n\n"
+                f"Pending team approvals will appear in this channel."
+            )
 
 
         except Exception as e:
