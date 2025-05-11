@@ -917,3 +917,24 @@ class StartTournamentView(View):
         
         # Save the tournament
         TournamentDatabase.save_tournament(self.tournament)
+
+        # Disable the button
+        button.disabled = True
+        await interaction.response.edit_message(view=self)
+        
+        # Update bracket channel
+        await update_bracket_display(interaction, self.tournament) # will add later
+        
+        # Create match channels for pending matches
+        for match in self.tournament.get_pending_matches():
+            await create_match_channel(interaction, self.tournament, match) # will add later
+        
+        ## Announce the start
+        if self.tournament.announcement_channel_id:
+            channel = interaction.guild.get_channel(self.tournament.announcement_channel_id)
+            if channel:
+                await channel.send(
+                    f"# 🏆 Tournament Has Started! 🏆\n\n"
+                    f"The tournament has officially begun! Check the bracket channel for match details.\n\n"
+                    f"Players in first-round matches should check their match channels for lobby information."
+                )
