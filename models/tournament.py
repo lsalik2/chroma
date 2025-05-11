@@ -225,3 +225,11 @@ class Tournament:
     def get_team(self, team_id: str) -> Optional[Team]:
         """Get a team by ID"""
         return self.teams.get(team_id)
+    
+    def get_team_by_name(self, team_name: str) -> Optional[Team]:
+        """Get a team by name (only returns approved or pending teams)"""
+        for team in self.teams.values():
+            # Only consider approved or pending teams
+            if team.status != TeamStatus.DENIED and team.name.lower() == team_name.lower():
+                return team
+        return None
