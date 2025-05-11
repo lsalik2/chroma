@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 from discord import TextStyle, Interaction
-from discord.ui import Modal, TextInput
+from discord.ui import Modal, TextInput, View
 
 # Constants
 CHANNEL_EMOJI_MAP = {
@@ -99,13 +99,19 @@ class TournamentCreateModal(Modal):
                 "registration_deadline": datetime.now() + timedelta(days=deadline_days),
                 "prize_info": self.prize_info.value if self.prize_info.value else None
             }
-            '''
+            
             # Move to format selection
             await interaction.response.send_message(
                 "Select the tournament format:",
                 view=TournamentFormatView(tournament_data),
                 ephemeral=True
             )
-            '''
+        
         except ValueError:
             await interaction.response.send_message("Please enter valid numbers for team size, max teams, and registration deadline.", ephemeral=True)
+
+
+class TournamentFormatView(View):
+    def __init__(self, tournament_data):
+        super().__init__()
+        self.tournament_data = tournament_data
