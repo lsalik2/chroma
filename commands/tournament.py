@@ -316,6 +316,24 @@ class TournamentConfirmView(View):
             
             # Save the tournament to database
             TournamentDatabase.save_tournament(tournament)
+            
+            # Send welcome messages
+            if tournament.announcement_channel_id:
+                channel = guild.get_channel(tournament.announcement_channel_id)
+                prize_text = ""
+                if tournament.prize_info:
+                    prize_text = f"**Prizes:**\n{tournament.prize_info}"
+                
+                await channel.send(
+                    f"# 🏆 Welcome to {tournament.name}! 🏆\n\n"
+                    f"**Team Size:** {tournament.team_size}v{tournament.team_size}\n"
+                    f"**Format:** {tournament.format.value.capitalize()}\n"
+                    f"**Registration Deadline:** <t:{int(tournament.registration_deadline.timestamp())}:F>\n"
+                    f"**Max Teams:** {tournament.max_teams if tournament.max_teams else 'No limit'}\n\n"
+                    f"{prize_text}"
+                )
+
+
 
         except Exception as e:
             print(f"Error creating tournament: {e}")
