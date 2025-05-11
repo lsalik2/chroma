@@ -53,3 +53,15 @@ class ConfigStorage:
             print(f"Error saving guild config: {e}")
             return False
     
+    @staticmethod
+    def set_tournament_admin_role(guild_id: int, role_id: Optional[int]) -> bool:
+        """Set the tournament admin role for a guild"""
+        config = ConfigStorage.get_guild_config(guild_id)
+        config["tournament_admin_role"] = role_id
+        return ConfigStorage.save_guild_config(guild_id, config)
+    
+    @staticmethod
+    def get_tournament_admin_role(guild_id: int) -> Optional[int]:
+        """Get the tournament admin role for a guild"""
+        config = ConfigStorage.get_guild_config(guild_id)
+        return config.get("tournament_admin_role")
