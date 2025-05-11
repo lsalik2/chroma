@@ -4,7 +4,7 @@ import discord
 from discord import Interaction, ButtonStyle, Button, SelectOption
 from discord.ui import Modal, TextInput, View, Select
 
-from models.tournament import TournamentFormat, Tournament, Player, Team
+from models.tournament import TournamentFormat, Tournament, Player, Team, TeamStatus
 from utils.tournament_db import TournamentDatabase
 
 # Constants
@@ -543,3 +543,22 @@ class TeamChoiceView(View):
     @discord.ui.button(label="Create Team", style=ButtonStyle.primary, row=0)
     async def create_team_button(self, interaction: Interaction, button: Button):
         await interaction.response.send_modal(CreateTeamModal(self.tournament, self.player)) # will add later
+    
+    @discord.ui.button(label="Join Team", style=ButtonStyle.primary, row=0)
+    async def join_team_button(self, interaction: Interaction, button: Button):
+        # Get available teams
+        available_teams = [
+            team for team in self.tournament.teams.values()
+            if team.status != TeamStatus.DENIED and len(team.players) < self.tournament.team_size
+        ]
+        
+        if not available_teams:
+            await interaction.response.send_message("No teams available to join. Please create a new team.", ephemeral=True)
+            return
+        
+        # Show team selection
+        await interaction.response.send_message(
+            "Select a team to join:",
+            view=TeamSelectView(self.tournament, self.player, available_teams),
+            ephemeral=True
+        )
