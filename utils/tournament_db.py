@@ -72,3 +72,18 @@ class TournamentDatabase:
         # This would require adding guild_id to the Tournament model
         # For now, just return all tournaments
         return TournamentDatabase.get_active_tournaments()
+    
+    @staticmethod
+    def delete_tournament(tournament_id: str) -> bool:
+        """Delete a tournament by ID"""
+        try:
+            file_path = os.path.join(TOURNAMENTS_DIR, f"{tournament_id}.json")
+            
+            if os.path.exists(file_path):
+                os.remove(file_path)
+                return True
+            
+            return False
+        except Exception as e:
+            print(f"Error deleting tournament: {e}")
+            return False
