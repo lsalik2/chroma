@@ -127,3 +127,12 @@ class TournamentFormatView(View):
             view=TournamentChannelsView(self.tournament_data),
             ephemeral=True
         )
+    
+    @discord.ui.button(label="BALANCE", style=ButtonStyle.primary, row=0)
+    async def balance_button(self, interaction: Interaction, button: Button):
+        self.tournament_data["format"] = TournamentFormat.BALANCE
+        await interaction.response.send_message(
+            "Select which channels to create for this tournament:",
+            view=TournamentChannelsView(self.tournament_data),
+            ephemeral=True
+        )
