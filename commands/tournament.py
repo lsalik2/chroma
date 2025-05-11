@@ -908,3 +908,12 @@ class StartTournamentView(View):
         if len(approved_teams) < 2:
             await interaction.response.send_message("Need at least 2 approved teams to start the tournament.", ephemeral=True)
             return
+        
+        # Create the bracket
+        matches = self.tournament.create_matches()
+        
+        # Set started_at time
+        self.tournament.started_at = datetime.now()
+        
+        # Save the tournament
+        TournamentDatabase.save_tournament(self.tournament)
