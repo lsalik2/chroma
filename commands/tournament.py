@@ -622,3 +622,22 @@ class CreateTeamModal(Modal):
         
         # Save tournament
         TournamentDatabase.save_tournament(self.tournament)
+        
+        # Send admin approval message
+        admin_channel = interaction.guild.get_channel(self.tournament.admin_channel_id)
+        if admin_channel:
+            embed = discord.Embed(
+                title=f"Team Registration: {team.name}",
+                description=f"A new team has registered for {self.tournament.name}.",
+                color=discord.Color.blue()
+            )
+            
+            player_list = f"- **{self.player.username}** (Epic: {self.player.epic_username}, MMR: {self.player.current_mmr}/{self.player.peak_mmr})"
+            embed.add_field(name="Players", value=player_list, inline=False)
+            embed.add_field(name="Team Captain", value=f"<@{team.captain_id}>", inline=True)
+            embed.add_field(name="Avg MMR", value=f"{team.calculate_average_mmr():.1f}", inline=True)
+            
+            await admin_channel.send(
+                embed=embed,
+                view=TeamApprovalView(self.tournament, team.id) # will add later
+            )
