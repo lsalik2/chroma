@@ -1,4 +1,6 @@
 from enum import Enum
+import uuid
+from typing import List, Optional
 
 class TournamentFormat(Enum):
     CHOOSE = "choose"   # Players choose their team
@@ -42,3 +44,14 @@ class Player:
             current_mmr=data["current_mmr"],
             peak_mmr=data["peak_mmr"]
         )
+
+class Team:
+    def __init__(self, name: str, captain_id: int, password: Optional[str] = None):
+        self.id = str(uuid.uuid4())
+        self.name = name
+        self.captain_id = captain_id
+        self.password = password
+        self.players: List[Player] = []
+        self.status = TeamStatus.PENDING
+        self.seeding = 0  # Will be set when tournament starts
+        self.denial_reason = None
