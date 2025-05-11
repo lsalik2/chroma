@@ -267,3 +267,11 @@ class Tournament:
             self.teams[team_id].denial_reason = reason
             return True
         return False
+    
+    def get_approved_teams(self) -> List[Team]:
+        """Get all approved teams"""
+        return [t for t in self.teams.values() if t.status == TeamStatus.APPROVED]
+    
+    def get_pending_teams(self) -> List[Team]:
+        """Get all pending teams"""
+        return [t for t in self.teams.values() if t.status == TeamStatus.PENDING]
