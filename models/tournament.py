@@ -180,3 +180,39 @@ class Match:
         match.lobby_password = data["lobby_password"]
         match.checked_in = data["checked_in"]
         return match
+
+class Tournament:
+    def __init__(
+        self, 
+        name: str, 
+        format: TournamentFormat, 
+        creator_id: int,
+        team_size: int, 
+        max_teams: Optional[int] = None,
+        registration_deadline: Optional[datetime] = None,
+        prize_info: Optional[str] = None
+    ):
+        self.id = str(uuid.uuid4())
+        self.name = name
+        self.format = format
+        self.creator_id = creator_id
+        self.team_size = team_size
+        self.max_teams = max_teams
+        self.registration_deadline = registration_deadline
+        self.prize_info = prize_info
+        self.teams: Dict[str, Team] = {}  # team_id -> Team
+        self.matches: Dict[str, Match] = {}  # match_id -> Match
+        self.created_at = datetime.now()
+        self.started_at = None
+        self.ended_at = None
+        self.is_active = True
+        self.bracket_channel_id = None
+        self.announcement_channel_id = None
+        self.admin_channel_id = None
+        self.signup_channel_id = None
+        self.rules_channel_id = None
+        self.lobby_channel_id = None
+        self.questions_channel_id = None
+        self.category_id = None
+        self.reminders = []  # List of scheduled reminder times
+        self.winner_id = None
