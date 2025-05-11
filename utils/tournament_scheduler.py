@@ -1,0 +1,7 @@
+class TournamentScheduler:
+    """Handles scheduled tasks for tournaments like reminders and auto-starting matches"""
+    
+    def __init__(self, bot):
+        self.bot = bot
+        self.scheduled_tasks = {}  # task_id -> asyncio.Task
+        self.running = False
