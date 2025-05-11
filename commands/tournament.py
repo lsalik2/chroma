@@ -739,3 +739,11 @@ class TeamSelectView(View):
             f"You have joined team **{team.name}**! Your registration is pending admin approval.",
             ephemeral=True
         )
+
+
+class TeamPasswordModal(Modal):
+    def __init__(self, tournament: Tournament, team: Team, player: Player):
+        super().__init__(title=f"Join {team.name}")
+        self.tournament = tournament
+        self.team = team
+        self.player = player  # Store the player object directly
