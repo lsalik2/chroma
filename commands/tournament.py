@@ -804,3 +804,12 @@ class TeamPasswordModal(Modal):
             f"You have joined team **{self.team.name}**! Your registration is pending admin approval.",
             ephemeral=True
         )
+
+
+# ---------------- Admin Views and Controls ----------------
+
+class TeamApprovalView(View):
+    def __init__(self, tournament: Tournament, team_id: str):
+        super().__init__(timeout=None)  # No timeout for admin buttons
+        self.tournament = tournament
+        self.team_id = team_id
