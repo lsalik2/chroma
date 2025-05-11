@@ -679,3 +679,7 @@ class TeamSelectView(View):
         )
         self.teams_select.callback = self.on_team_select
         self.add_item(self.teams_select)
+    
+    async def on_team_select(self, interaction: Interaction):
+        team_id = self.teams_select.values[0]
+        team = self.tournament.get_team(team_id)
