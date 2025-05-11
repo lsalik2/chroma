@@ -70,3 +70,45 @@ def create_tournament_bracket_text(tournament_name: str, teams: List[Dict], matc
     
     bracket_lines.append("```")
     return "\n".join(bracket_lines)
+
+async def send_bracket_to_channel(channel, tournament):
+    """
+    Send a text bracket to a channel
+    
+    Parameters:
+    - channel: The Discord channel to send to
+    - tournament: The Tournament object
+    """
+    # Convert tournament data to the format expected by create_tournament_bracket_text
+    teams = [
+        {'id': team.id, 'name': team.name}
+        for team in tournament.teams.values()
+        if team.status.value == 'approved'
+    ]
+    
+    matches = [
+        {
+            'round': match.round_number,
+            'match_number': match.match_number,
+            'team1_id': match.team1_id,
+            'team2_id': match.team2_id,
+            'winner_id': match.winner_id
+        }
+        for match in tournament.matches.values()
+    ]
+    
+    bracket_text = create_tournament_bracket_text(tournament.name, teams, matches)
+    
+    # Send team list
+    team_list = "# Registered Teams\n\n"
+    approved_teams = [team for team in tournament.teams.values() if team.status.value == 'approved']
+    
+    for team in sorted(approved_teams, key=lambda t: t.seeding or 999):
+        player_names = ", ".join([p.username for p in team.players])
+        seed_text = f"Seed #{team.seeding}: " if team.seeding else ""
+        team_list += f"**{seed_text}{team.name}** - {player_names}\n"
+    
+    await channel.send(team_list)
+    
+    # Send the bracket
+    await channel.send(f"# Tournament Bracket\n{bracket_text}")
