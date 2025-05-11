@@ -426,3 +426,11 @@ class PlayerSignupModal(Modal):
             max_length=100
         )
         self.add_item(self.epic_username)
+        
+        self.current_mmr = TextInput(
+            label=f"Current {tournament.team_size}v{tournament.team_size} MMR",
+            placeholder="Your current MMR (estimate if needed)",
+            required=True,
+            max_length=5
+        )
+        self.add_item(self.current_mmr)
