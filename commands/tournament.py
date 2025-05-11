@@ -799,3 +799,8 @@ class TeamPasswordModal(Modal):
             embed.add_field(name="Avg MMR", value=f"{self.team.calculate_average_mmr():.1f}", inline=True)
             
             await admin_channel.send(embed=embed)
+        
+        await interaction.response.send_message(
+            f"You have joined team **{self.team.name}**! Your registration is pending admin approval.",
+            ephemeral=True
+        )
