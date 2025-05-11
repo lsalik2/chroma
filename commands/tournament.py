@@ -47,3 +47,12 @@ class TournamentCreateModal(Modal):
             max_length=3
         )
         self.add_item(self.max_teams)
+        
+        self.registration_deadline = TextInput(
+            label="Registration Deadline (days)",
+            placeholder="Days until registration closes",
+            required=False,
+            max_length=2,
+            default="7"
+        )
+        self.add_item(self.registration_deadline)
