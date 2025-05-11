@@ -833,3 +833,11 @@ class TeamApprovalView(View):
             content=f"**Team {team.name} has been approved!**",
             view=self
         )
+        
+        # Notify team members
+        for player in team.players:
+            try:
+                user = await interaction.client.fetch_user(player.user_id)
+                await user.send(f"Your team **{team.name}** has been approved for the tournament **{self.tournament.name}**!")
+            except:
+                pass  # Ignore if DM fails
