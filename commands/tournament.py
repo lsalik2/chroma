@@ -539,3 +539,7 @@ class TeamChoiceView(View):
         super().__init__()
         self.tournament = tournament
         self.player = player  # Store the player object directly
+    
+    @discord.ui.button(label="Create Team", style=ButtonStyle.primary, row=0)
+    async def create_team_button(self, interaction: Interaction, button: Button):
+        await interaction.response.send_modal(CreateTeamModal(self.tournament, self.player)) # will add later
