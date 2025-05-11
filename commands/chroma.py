@@ -17,10 +17,10 @@ from utils.ansi_format import build_ansi_response
     mobile_friendly=[app_commands.Choice(name="Yes", value="yes")]
 )
 async def chroma_command(interaction: Interaction, message: str,
-                         format: app_commands.Choice[int],
-                         background_color: app_commands.Choice[int],
-                         text_color: app_commands.Choice[int],
-                         mobile_friendly: app_commands.Choice[str] = None):
+                            format: app_commands.Choice[int],
+                            background_color: app_commands.Choice[int],
+                            text_color: app_commands.Choice[int],
+                            mobile_friendly: app_commands.Choice[str] = None):
     mobile = mobile_friendly and mobile_friendly.value == "yes"
     response = build_ansi_response(message, format.value, text_color.value, background_color.value, mobile)
     await interaction.response.send_message(response, ephemeral=True)

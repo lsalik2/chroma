@@ -8,7 +8,8 @@ from commands import setup_commands
 from views import setup_views
 
 # --------------------- Section: Setup and Intents ---------------------
-intents = discord.Intents.default()
+intents = discord.Intents.default() # TODO gotta change the administrator requirement when inviting bot, need to look at what permissions exactly it will need
+intents.members = True  # Need members intent for tournament functionality
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
@@ -25,7 +26,7 @@ async def on_ready():
         print(f"Error syncing commands: {e}")
     activity = discord.Activity(
         type=discord.ActivityType.listening, 
-        name="/chroma"
+        name="/chroma | /tournament"
     )
     await client.change_presence(activity=activity)
     print('Bot is ready!')
@@ -39,10 +40,11 @@ def main():
         print("Error: DISCORD_TOKEN not found in environment variables")
         return
     
+    # Create data directories if they don't exist
+    os.makedirs('data/tournaments', exist_ok=True)
+    
     setup_commands(tree)       # Register commands
     setup_views(tree, client)  # Register context menu views
-
-    client.run(token)
 
     client.run(token)
 
