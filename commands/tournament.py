@@ -145,3 +145,9 @@ class TournamentFormatView(View):
             view=TournamentChannelsView(self.tournament_data),
             ephemeral=True
         )
+
+
+class TournamentChannelsView(View):
+    def __init__(self, tournament_data):
+        super().__init__()
+        self.tournament_data = tournament_data
