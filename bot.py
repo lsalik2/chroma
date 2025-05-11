@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 # Import command and view setup functions
 from commands import setup_commands
 from views import setup_views
+from utils import start_tournament_scheduler
 
 # --------------------- Section: Setup and Intents ---------------------
 intents = discord.Intents.default() # TODO gotta change the administrator requirement when inviting bot, need to look at what permissions exactly it will need
@@ -24,6 +25,12 @@ async def on_ready():
         print("Command sync completed successfully")
     except Exception as e:
         print(f"Error syncing commands: {e}")
+    
+    # Start the tournament scheduler
+    print("Starting tournament scheduler...")
+    client.tournament_scheduler = await start_tournament_scheduler(client)
+    print("Tournament scheduler started")
+    
     activity = discord.Activity(
         type=discord.ActivityType.listening, 
         name="/chroma | /tournament"
