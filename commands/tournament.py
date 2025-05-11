@@ -656,3 +656,17 @@ class TeamSelectView(View):
         self.tournament = tournament
         self.player = player  # Store the player object directly
         self.available_teams = available_teams
+        
+        # Add team selection dropdown
+        options = []
+        for team in available_teams:
+            captain = f"<@{team.captain_id}>"
+            players = f"{len(team.players)}/{tournament.team_size}"
+            
+            options.append(
+                SelectOption(
+                    label=team.name[:100],  # Max 100 chars
+                    value=team.id,
+                    description=f"Captain: {captain[:100]}, Players: {players}"
+                )
+            )
