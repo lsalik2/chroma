@@ -860,3 +860,9 @@ class TeamDenialModal(Modal):
             style=discord.TextStyle.paragraph
         )
         self.add_item(self.reason)
+    
+    async def on_submit(self, interaction: Interaction):
+        team = self.tournament.get_team(self.team_id)
+        if not team:
+            await interaction.response.send_message("Team not found.", ephemeral=True)
+            return
