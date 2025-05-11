@@ -705,3 +705,6 @@ class TeamSelectView(View):
         if not team.add_player(self.player):  # Use the stored player object
             await interaction.response.send_message("You are already on this team.", ephemeral=True)
             return
+        
+        # Save tournament
+        TournamentDatabase.save_tournament(self.tournament)
