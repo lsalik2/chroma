@@ -252,3 +252,18 @@ class Tournament:
                     if player.user_id == user_id:
                         return True
         return False
+    
+    def approve_team(self, team_id: str) -> bool:
+        """Approve a team for participation"""
+        if team_id in self.teams:
+            self.teams[team_id].status = TeamStatus.APPROVED
+            return True
+        return False
+    
+    def deny_team(self, team_id: str, reason: str) -> bool:
+        """Deny a team from participating"""
+        if team_id in self.teams:
+            self.teams[team_id].status = TeamStatus.DENIED
+            self.teams[team_id].denial_reason = reason
+            return True
+        return False
