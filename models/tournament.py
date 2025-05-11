@@ -63,3 +63,10 @@ class Team:
         
         self.players.append(player)
         return True
+    
+    def remove_player(self, user_id: int) -> bool:
+        for i, player in enumerate(self.players):
+            if player.user_id == user_id:
+                self.players.pop(i)
+                return True
+        return False
