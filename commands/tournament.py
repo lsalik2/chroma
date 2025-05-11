@@ -892,3 +892,11 @@ class TeamDenialModal(Modal):
                 )
             except:
                 pass  # Ignore if DM fails
+
+
+# ---------------- Tournament Bracket Management ----------------
+
+class StartTournamentView(View):
+    def __init__(self, tournament: Tournament):
+        super().__init__()
+        self.tournament = tournament
