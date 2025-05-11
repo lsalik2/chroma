@@ -65,3 +65,10 @@ class TournamentDatabase:
             print(f"Error loading active tournaments: {e}")
         
         return tournaments
+    
+    @staticmethod
+    def get_guild_tournaments(guild_id: int) -> List[Tournament]:
+        """Get all tournaments for a specific guild"""
+        # This would require adding guild_id to the Tournament model
+        # For now, just return all tournaments
+        return TournamentDatabase.get_active_tournaments()
