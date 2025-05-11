@@ -1,4 +1,6 @@
-from discord import TextStyle
+from datetime import datetime, timedelta
+
+from discord import TextStyle, Interaction
 from discord.ui import Modal, TextInput
 
 # Constants
@@ -66,3 +68,44 @@ class TournamentCreateModal(Modal):
             style=TextStyle.paragraph
         )
         self.add_item(self.prize_info)
+
+    async def on_submit(self, interaction: Interaction):
+        # Validate inputs
+        try:
+            team_size = int(self.team_size.value)
+            if team_size <= 0 or team_size > 4:
+                await interaction.response.send_message("Team size must be between 1 and 4.", ephemeral=True)
+                return
+            
+            max_teams = None
+            if self.max_teams.value:
+                max_teams = int(self.max_teams.value)
+                if max_teams <= 0:
+                    await interaction.response.send_message("Max teams must be a positive number.", ephemeral=True)
+                    return
+            
+            deadline_days = 7
+            if self.registration_deadline.value:
+                deadline_days = int(self.registration_deadline.value)
+                if deadline_days <= 0:
+                    await interaction.response.send_message("Registration deadline must be a positive number of days.", ephemeral=True)
+                    return
+            
+            # Store the form data in a variable to pass to the next view
+            tournament_data = {
+                "name": self.name.value,
+                "team_size": team_size,
+                "max_teams": max_teams,
+                "registration_deadline": datetime.now() + timedelta(days=deadline_days),
+                "prize_info": self.prize_info.value if self.prize_info.value else None
+            }
+            '''
+            # Move to format selection
+            await interaction.response.send_message(
+                "Select the tournament format:",
+                view=TournamentFormatView(tournament_data),
+                ephemeral=True
+            )
+            '''
+        except ValueError:
+            await interaction.response.send_message("Please enter valid numbers for team size, max teams, and registration deadline.", ephemeral=True)
