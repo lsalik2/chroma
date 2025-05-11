@@ -841,3 +841,7 @@ class TeamApprovalView(View):
                 await user.send(f"Your team **{team.name}** has been approved for the tournament **{self.tournament.name}**!")
             except:
                 pass  # Ignore if DM fails
+    
+    @discord.ui.button(label="Deny", style=ButtonStyle.red, row=0)
+    async def deny_button(self, interaction: Interaction, button: Button):
+        await interaction.response.send_modal(TeamDenialModal(self.tournament, self.team_id))
