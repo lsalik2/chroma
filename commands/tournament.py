@@ -760,3 +760,8 @@ class TeamPasswordModal(Modal):
         if self.password.value != self.team.password:
             await interaction.response.send_message("Incorrect password.", ephemeral=True)
             return
+        
+        # Check if team is full
+        if len(self.team.players) >= self.tournament.team_size:
+            await interaction.response.send_message("This team is already full.", ephemeral=True)
+            return
