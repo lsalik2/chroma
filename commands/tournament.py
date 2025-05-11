@@ -747,3 +747,10 @@ class TeamPasswordModal(Modal):
         self.tournament = tournament
         self.team = team
         self.player = player  # Store the player object directly
+        
+        self.password = TextInput(
+            label="Team Password",
+            placeholder="Enter the team password",
+            required=True
+        )
+        self.add_item(self.password)
