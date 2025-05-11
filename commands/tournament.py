@@ -275,6 +275,17 @@ class TournamentConfirmView(View):
                         read_messages=True,
                         send_messages=True
                     )
+            
+            # If no tournament admin role is set, fall back to any role with "admin" in the name
+            if not admin_role:
+                for role in guild.roles:
+                    if "admin" in role.name.lower():
+                        admin_role = role
+                        admin_overwrites[admin_role] = discord.PermissionOverwrite(
+                            read_messages=True,
+                            send_messages=True
+                        )
+                        break
 
         except Exception as e:
             print(f"Error creating tournament: {e}")
