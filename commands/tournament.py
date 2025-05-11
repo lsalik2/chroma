@@ -824,3 +824,12 @@ class TeamApprovalView(View):
         # Approve the team
         self.tournament.approve_team(self.team_id)
         TournamentDatabase.save_tournament(self.tournament)
+        
+        # Disable buttons
+        for item in self.children:
+            item.disabled = True
+        
+        await interaction.response.edit_message(
+            content=f"**Team {team.name} has been approved!**",
+            view=self
+        )
