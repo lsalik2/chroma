@@ -257,7 +257,24 @@ class TournamentConfirmView(View):
                     tournament.lobby_channel_id = channel.id
                 elif channel_name == "questions":
                     tournament.questions_channel_id = channel.id
-
+            
+            # Create admin channel (always created)
+            admin_overwrites = {
+                guild.default_role: discord.PermissionOverwrite(read_messages=False),
+            }
+            
+            # Try to find the tournament admin role
+            from utils.config_storage import ConfigStorage
+            admin_role_id = ConfigStorage.get_tournament_admin_role(guild.id)
+            admin_role = None
+            
+            if admin_role_id:
+                admin_role = guild.get_role(admin_role_id)
+                if admin_role:
+                    admin_overwrites[admin_role] = discord.PermissionOverwrite(
+                        read_messages=True,
+                        send_messages=True
+                    )
 
         except Exception as e:
             print(f"Error creating tournament: {e}")
