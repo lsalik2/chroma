@@ -1,6 +1,6 @@
 import os
 import json
-from typing import Optional
+from typing import Optional, List
 
 from models.tournament import Tournament
 
@@ -47,3 +47,21 @@ class TournamentDatabase:
         except Exception as e:
             print(f"Error loading tournament: {e}")
             return None
+    
+    @staticmethod
+    def get_active_tournaments() -> List[Tournament]:
+        """Get all active tournaments"""
+        tournaments = []
+        
+        try:
+            for filename in os.listdir(TOURNAMENTS_DIR):
+                if filename.endswith('.json'):
+                    tournament_id = filename[:-5]  # Remove .json extension
+                    tournament = TournamentDatabase.load_tournament(tournament_id)
+                    
+                    if tournament and tournament.is_active:
+                        tournaments.append(tournament)
+        except Exception as e:
+            print(f"Error loading active tournaments: {e}")
+        
+        return tournaments
