@@ -275,3 +275,18 @@ class Tournament:
     def get_pending_teams(self) -> List[Team]:
         """Get all pending teams"""
         return [t for t in self.teams.values() if t.status == TeamStatus.PENDING]
+    
+    def calculate_seedings(self) -> None: # TODO maybe condense calculate_average_mmr into here
+        """Calculate team seedings based on MMR"""
+        approved_teams = self.get_approved_teams()
+        
+        # Sort teams by average MMR (highest to lowest)
+        sorted_teams = sorted(
+            approved_teams, 
+            key=lambda t: t.calculate_average_mmr(), 
+            reverse=True
+        )
+        
+        # Assign seeding numbers (1 = highest seed)
+        for i, team in enumerate(sorted_teams):
+            team.seeding = i + 1
