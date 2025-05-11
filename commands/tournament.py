@@ -754,3 +754,9 @@ class TeamPasswordModal(Modal):
             required=True
         )
         self.add_item(self.password)
+    
+    async def on_submit(self, interaction: Interaction):
+        # Check password
+        if self.password.value != self.team.password:
+            await interaction.response.send_message("Incorrect password.", ephemeral=True)
+            return
