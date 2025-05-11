@@ -866,3 +866,17 @@ class TeamDenialModal(Modal):
         if not team:
             await interaction.response.send_message("Team not found.", ephemeral=True)
             return
+        
+        # Deny the team
+        self.tournament.deny_team(self.team_id, self.reason.value)
+        TournamentDatabase.save_tournament(self.tournament)
+        
+        # Update the message
+        for item in interaction.message.components:
+            for child in item.children:
+                child.disabled = True
+        
+        await interaction.response.edit_message(
+            content=f"**Team {team.name} has been denied.**\nReason: {self.reason.value}",
+            view=None
+        )
