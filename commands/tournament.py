@@ -1,7 +1,10 @@
 from datetime import datetime, timedelta
 
-from discord import TextStyle, Interaction
+import discord
+from discord import Interaction, ButtonStyle, Button
 from discord.ui import Modal, TextInput, View
+
+from models.tournament import TournamentFormat
 
 # Constants
 CHANNEL_EMOJI_MAP = {
@@ -65,7 +68,7 @@ class TournamentCreateModal(Modal):
             placeholder="Describe tournament prizes",
             required=False,
             max_length=1000,
-            style=TextStyle.paragraph
+            style=discord.TextStyle.paragraph
         )
         self.add_item(self.prize_info)
 
@@ -115,3 +118,12 @@ class TournamentFormatView(View):
     def __init__(self, tournament_data):
         super().__init__()
         self.tournament_data = tournament_data
+    
+    @discord.ui.button(label="CHOOSE", style=ButtonStyle.primary, row=0)
+    async def choose_button(self, interaction: Interaction, button: Button):
+        self.tournament_data["format"] = TournamentFormat.CHOOSE
+        await interaction.response.send_message(
+            "Select which channels to create for this tournament:",
+            view=TournamentChannelsView(self.tournament_data),
+            ephemeral=True
+        )
