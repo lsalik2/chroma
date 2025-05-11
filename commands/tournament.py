@@ -592,3 +592,19 @@ class CreateTeamModal(Modal):
         for team in self.tournament.teams.values():
             if team.name.lower() == self.team_name.value.lower():
                 existing_teams.append(team)
+        
+        # Check if any existing team with the same name is not denied
+        active_team_exists = False
+        for team in existing_teams:
+            if team.status != TeamStatus.DENIED:
+                active_team_exists = True
+                break
+        
+        if active_team_exists:
+            await interaction.response.send_message("A team with this name already exists. Please choose a different name.", ephemeral=True)
+            return
+        
+        # If we found only denied teams with this name, remove them to avoid conflicts
+        for team in existing_teams:
+            if team.status == TeamStatus.DENIED:
+                del self.tournament.teams[team.id]
