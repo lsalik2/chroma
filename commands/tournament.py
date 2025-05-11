@@ -813,3 +813,10 @@ class TeamApprovalView(View):
         super().__init__(timeout=None)  # No timeout for admin buttons
         self.tournament = tournament
         self.team_id = team_id
+    
+    @discord.ui.button(label="Approve", style=ButtonStyle.green, row=0)
+    async def approve_button(self, interaction: Interaction, button: Button):
+        team = self.tournament.get_team(self.team_id)
+        if not team:
+            await interaction.response.send_message("Team not found.", ephemeral=True)
+            return
