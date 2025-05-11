@@ -112,3 +112,8 @@ class TournamentScheduler:
                 
                 # Add callback to remove task when done
                 task.add_done_callback(lambda t, tid=task_id: self._task_done_callback(tid))
+    
+    def _task_done_callback(self, task_id: str):
+        """Called when a scheduled task completes"""
+        if task_id in self.scheduled_tasks:
+            del self.scheduled_tasks[task_id]
