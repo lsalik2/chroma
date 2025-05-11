@@ -216,3 +216,8 @@ class Tournament:
         self.category_id = None
         self.reminders = []  # List of scheduled reminder times
         self.winner_id = None
+    
+    def add_team(self, team: Team) -> str:
+        """Add a team to the tournament and return team ID"""
+        self.teams[team.id] = team
+        return team.id
