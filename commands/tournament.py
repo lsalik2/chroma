@@ -559,6 +559,13 @@ class TeamChoiceView(View):
         # Show team selection
         await interaction.response.send_message(
             "Select a team to join:",
-            view=TeamSelectView(self.tournament, self.player, available_teams),
+            view=TeamSelectView(self.tournament, self.player, available_teams), # will add later
             ephemeral=True
         )
+
+
+class CreateTeamModal(Modal):
+    def __init__(self, tournament: Tournament, player: Player):
+        super().__init__(title="Create a Team")
+        self.tournament = tournament
+        self.player = player  # Store the player object directly
