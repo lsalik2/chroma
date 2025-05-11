@@ -1,6 +1,7 @@
 from enum import Enum
 import uuid
-from typing import List, Optional
+from typing import List, Optional, Dict
+from datetime import datetime
 
 class TournamentFormat(Enum):
     CHOOSE = "choose"   # Players choose their team
@@ -106,3 +107,20 @@ class Team:
         team.seeding = data["seeding"]
         team.denial_reason = data["denial_reason"]
         return team
+
+class Match:
+    def __init__(self, match_id: str, team1_id: str, team2_id: str, round_number: int, match_number: int):
+        self.id = match_id
+        self.team1_id = team1_id
+        self.team2_id = team2_id
+        self.round_number = round_number  # Round in tournament (1 = first round, etc)
+        self.match_number = match_number  # Match number within the round
+        self.status = MatchStatus.PENDING
+        self.winner_id = None
+        self.loser_id = None
+        self.votes: Dict[int, str] = {}  # Map of user_id -> voted team_id
+        self.channel_id = None
+        self.created_at = datetime.now()
+        self.lobby_name = None
+        self.lobby_password = None
+        self.checked_in = {team1_id: False, team2_id: False}
