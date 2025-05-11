@@ -199,3 +199,5 @@ class TournamentConfirmView(View):
     
     async def create_tournament(self, interaction: Interaction):
         await interaction.response.defer(ephemeral=True)
+        
+        data = self.tournament_data
