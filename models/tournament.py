@@ -70,3 +70,13 @@ class Team:
                 self.players.pop(i)
                 return True
         return False
+    
+    def calculate_average_mmr(self) -> float: # TODO placeholder until lanky's alg is used instead, though this works fairly well
+        if not self.players:
+            return 0
+        
+        total_current = sum(p.current_mmr for p in self.players)
+        total_peak = sum(p.peak_mmr for p in self.players)
+        
+        # Weight current MMR 70%, peak MMR 30%
+        return (total_current * 0.7 + total_peak * 0.3) / len(self.players)
