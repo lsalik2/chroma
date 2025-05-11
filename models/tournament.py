@@ -221,3 +221,7 @@ class Tournament:
         """Add a team to the tournament and return team ID"""
         self.teams[team.id] = team
         return team.id
+    
+    def get_team(self, team_id: str) -> Optional[Team]:
+        """Get a team by ID"""
+        return self.teams.get(team_id)
