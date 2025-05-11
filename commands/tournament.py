@@ -1,4 +1,4 @@
-from discord.ui import Modal
+from discord.ui import Modal, TextInput
 
 # Constants
 CHANNEL_EMOJI_MAP = {
@@ -23,3 +23,11 @@ PASSWORDS = [
 class TournamentCreateModal(Modal):
     def __init__(self):
         super().__init__(title="Create Tournament")
+        
+        self.name = TextInput(
+            label="Tournament Name",
+            placeholder="Enter tournament name",
+            required=True,
+            max_length=100
+        )
+        self.add_item(self.name)
