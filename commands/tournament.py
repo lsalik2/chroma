@@ -197,3 +197,5 @@ class TournamentConfirmView(View):
     async def cancel_button(self, interaction: Interaction, button: Button):
         await interaction.response.send_message("Tournament creation cancelled.", ephemeral=True)
     
+    async def create_tournament(self, interaction: Interaction):
+        await interaction.response.defer(ephemeral=True)
