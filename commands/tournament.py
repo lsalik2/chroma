@@ -181,3 +181,9 @@ class TournamentChannelsView(View):
             view=TournamentConfirmView(self.tournament_data),
             ephemeral=True
         )
+
+
+class TournamentConfirmView(View):
+    def __init__(self, tournament_data):
+        super().__init__()
+        self.tournament_data = tournament_data
