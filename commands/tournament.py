@@ -442,3 +442,16 @@ class PlayerSignupModal(Modal):
             max_length=5
         )
         self.add_item(self.peak_mmr)
+    
+    async def on_submit(self, interaction: Interaction):
+        try:
+            # Validate inputs
+            current_mmr = int(self.current_mmr.value)
+            peak_mmr = int(self.peak_mmr.value)
+
+
+        except ValueError:
+            await interaction.response.send_message("Please enter valid numbers for MMR values.", ephemeral=True)
+        except Exception as e:
+            print(f"Error in signup: {e}")
+            await interaction.response.send_message(f"An error occurred: {e}", ephemeral=True)
