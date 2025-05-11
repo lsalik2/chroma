@@ -39,3 +39,11 @@ class TournamentCreateModal(Modal):
             max_length=1
         )
         self.add_item(self.team_size)
+        
+        self.max_teams = TextInput(
+            label="Max Teams (Optional)",
+            placeholder="Leave empty for no limit",
+            required=False,
+            max_length=3
+        )
+        self.add_item(self.max_teams)
