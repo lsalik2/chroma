@@ -364,3 +364,53 @@ class Tournament:
     def get_match(self, match_id: str) -> Optional[Match]:
         """Get a match by ID"""
         return self.matches.get(match_id)
+    
+    def advance_match(self, match_id: str, winner_id: str) -> Optional[Match]:
+        """
+        Set the winner of a match and create the next match if applicable
+        Returns the new match if one was created
+        """
+        if match_id not in self.matches:
+            return None
+        
+        match = self.matches[match_id]
+        
+        # Validate the winner is actually in this match
+        if winner_id != match.team1_id and winner_id != match.team2_id:
+            return None
+        
+        match.winner_id = winner_id
+        match.loser_id = match.team2_id if winner_id == match.team1_id else match.team1_id
+        match.status = MatchStatus.COMPLETED
+        
+        # Calculate the next match
+        next_round = match.round_number + 1
+        next_match_number = (match.match_number + 1) // 2
+        next_match_id = f"match_{self.id}_{next_round}_{next_match_number}"
+        
+        # Check if the next match already exists
+        if next_match_id in self.matches:
+            next_match = self.matches[next_match_id]
+            
+            # Determine which side the winning team goes to
+            if match.match_number % 2 == 1:  # Odd match number goes to team1
+                next_match.team1_id = winner_id
+            else:  # Even match number goes to team2
+                next_match.team2_id = winner_id
+            
+            # If both teams are set, the match is ready
+            if next_match.team1_id and next_match.team2_id:
+                return next_match
+            
+            return None
+        else:
+            # Create the next match
+            # For the first position in the next round, we leave one position empty
+            # until we know the winner of the other match in this "pair"
+            team1_id = winner_id if match.match_number % 2 == 1 else None
+            team2_id = winner_id if match.match_number % 2 == 0 else None
+            
+            next_match = Match(next_match_id, team1_id, team2_id, next_round, next_match_number)
+            self.matches[next_match_id] = next_match
+            
+            return None  # Return None as the match isn't ready yet
