@@ -134,3 +134,22 @@ class TournamentDatabase:
             print(f"Error finding tournament by channel: {e}")
         
         return None
+    
+    @staticmethod
+    def get_player_tournament(user_id: int) -> Optional[Tournament]:
+        """Find tournament that a player is participating in"""
+        try:
+            for filename in os.listdir(TOURNAMENTS_DIR):
+                if filename.endswith('.json'):
+                    tournament_id = filename[:-5]
+                    tournament = TournamentDatabase.load_tournament(tournament_id)
+                    
+                    if not tournament or not tournament.is_active:
+                        continue
+                    
+                    if tournament.is_player_registered(user_id):
+                        return tournament
+        except Exception as e:
+            print(f"Error finding player tournament: {e}")
+        
+        return None
