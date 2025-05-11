@@ -371,6 +371,23 @@ class TournamentConfirmView(View):
                     f"Teams will be listed here after registration and approval."
                 )
             
+            if tournament.signup_channel_id:
+                channel = guild.get_channel(tournament.signup_channel_id)
+                team_info = ""
+                if tournament.format == TournamentFormat.CHOOSE:
+                    team_info = "You will also need to create or join a team after registration."
+                
+                await channel.send(
+                    f"# ✒️ Tournament Sign-up ✒️\n\n"
+                    f"Use the `/signup` command in this channel to register for the tournament.\n\n"
+                    f"You will need:\n"
+                    f"- Your Epic username\n"
+                    f"- Your current {tournament.team_size}v{tournament.team_size} MMR\n"
+                    f"- Your peak {tournament.team_size}v{tournament.team_size} MMR\n\n"
+                    f"{team_info}"
+                )
+
+
 
         except Exception as e:
             print(f"Error creating tournament: {e}")
