@@ -1,5 +1,6 @@
 import asyncio
 from datetime import datetime, timedelta
+from typing import Dict
 
 from utils.tournament_db import TournamentDatabase
 from models.tournament import Tournament
@@ -117,3 +118,28 @@ class TournamentScheduler:
         """Called when a scheduled task completes"""
         if task_id in self.scheduled_tasks:
             del self.scheduled_tasks[task_id]
+    
+    async def _send_reminder(self, tournament: Tournament, reminder: Dict):
+        """Send a reminder for a tournament"""
+        # Get announcement channel
+        if not tournament.announcement_channel_id:
+            return
+        
+        channel = self.bot.get_channel(tournament.announcement_channel_id)
+        if not channel:
+            return
+        
+        # Get all player mentions
+        mentions = []
+        for team in tournament.teams.values():
+            if team.status.value == "approved":
+                for player in team.players:
+                    mentions.append(f"<@{player.user_id}>")
+        
+        mentions_text = " ".join(mentions)
+        
+        await channel.send(
+            f"# 📢 Tournament Reminder 📢\n\n"
+            f"{reminder['message']}\n\n"
+            f"{mentions_text}"
+        )
