@@ -242,3 +242,13 @@ class Tournament:
                 if any(p.user_id == user_id for p in team.players):
                     return team
         return None
+    
+    def is_player_registered(self, user_id: int) -> bool:
+        """Check if a player is already in any APPROVED or PENDING team"""
+        for team in self.teams.values():
+            # Only consider players in approved or pending teams as "registered"
+            if team.status != TeamStatus.DENIED:
+                for player in team.players:
+                    if player.user_id == user_id:
+                        return True
+        return False
