@@ -40,3 +40,16 @@ class ConfigStorage:
             print(f"Error loading guild config: {e}")
             return {"guild_id": guild_id}
     
+    @staticmethod
+    def save_guild_config(guild_id: int, config: Dict[str, Any]) -> bool:
+        """Save configuration for a guild"""
+        file_path = os.path.join(CONFIG_DIR, f"{guild_id}.json")
+        
+        try:
+            with open(file_path, 'w') as f:
+                json.dump(config, f, indent=2)
+            return True
+        except Exception as e:
+            print(f"Error saving guild config: {e}")
+            return False
+    
