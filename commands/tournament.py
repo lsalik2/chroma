@@ -509,3 +509,11 @@ class PlayerSignupModal(Modal):
     async def send_admin_approval(self, interaction: Interaction, team: Team):
         # Get admin channel
         admin_channel = interaction.guild.get_channel(self.tournament.admin_channel_id)
+        if not admin_channel:
+            return
+        
+        # Create team info message
+        player_list = "\n".join([
+            f"- **{p.username}** (Epic: {p.epic_username}, MMR: {p.current_mmr}/{p.peak_mmr})"
+            for p in team.players
+        ])
