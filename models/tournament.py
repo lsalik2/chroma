@@ -356,3 +356,7 @@ class Tournament:
     def get_matches_by_round(self, round_number: int) -> List[Match]:
         """Get all matches for a specific round"""
         return [m for m in self.matches.values() if m.round_number == round_number]
+    
+    def get_pending_matches(self) -> List[Match]:
+        """Get all pending matches"""
+        return [m for m in self.matches.values() if m.status == MatchStatus.PENDING]
