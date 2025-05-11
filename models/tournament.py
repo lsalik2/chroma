@@ -414,3 +414,9 @@ class Tournament:
             self.matches[next_match_id] = next_match
             
             return None  # Return None as the match isn't ready yet
+    
+    def get_winner(self) -> Optional[Team]:
+        """Get the tournament winner (if tournament is completed)"""
+        if not self.winner_id:
+            return None
+        return self.teams.get(self.winner_id)
