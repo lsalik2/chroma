@@ -456,6 +456,11 @@ class PlayerSignupModal(Modal):
             if peak_mmr < current_mmr:
                 await interaction.response.send_message("Peak MMR cannot be lower than current MMR.", ephemeral=True)
                 return
+            
+            # Check if already registered
+            if self.tournament.is_player_registered(interaction.user.id):
+                await interaction.response.send_message("You are already registered for this tournament.", ephemeral=True)
+                return
 
         except ValueError:
             await interaction.response.send_message("Please enter valid numbers for MMR values.", ephemeral=True)
