@@ -192,3 +192,8 @@ class TournamentConfirmView(View):
     async def confirm_button(self, interaction: Interaction, button: Button):
         # Create the tournament
         await self.create_tournament(interaction)
+    
+    @discord.ui.button(label="Cancel", style=ButtonStyle.red, row=0)
+    async def cancel_button(self, interaction: Interaction, button: Button):
+        await interaction.response.send_message("Tournament creation cancelled.", ephemeral=True)
+    
