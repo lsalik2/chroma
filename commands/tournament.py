@@ -694,3 +694,9 @@ class TeamSelectView(View):
         else:
             # Join team without password
             await self.join_team(interaction, team)
+    
+    async def join_team(self, interaction: Interaction, team: Team):
+        # Check if team is full
+        if len(team.players) >= self.tournament.team_size:
+            await interaction.response.send_message("This team is already full.", ephemeral=True)
+            return
