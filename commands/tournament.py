@@ -400,8 +400,16 @@ class TournamentConfirmView(View):
                 f"- `/tournament edit` - Edit tournament details\n\n"
                 f"Pending team approvals will appear in this channel."
             )
-
-
+            
+            # Notify the creator
+            await interaction.followup.send(
+                f"Tournament **{tournament.name}** has been created successfully!", 
+                ephemeral=True
+            )
+            
         except Exception as e:
             print(f"Error creating tournament: {e}")
             await interaction.followup.send(f"Error creating tournament: {e}", ephemeral=True)
+
+
+# ---------------- Player Signup Views and Modals ----------------
