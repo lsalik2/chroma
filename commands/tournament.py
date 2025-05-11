@@ -212,3 +212,53 @@ class TournamentConfirmView(View):
             registration_deadline=data["registration_deadline"],
             prize_info=data["prize_info"]
         )
+        
+        # Create Discord channels
+        try:
+            guild = interaction.guild
+            
+            # Create category
+            category = await guild.create_category(name=f"🏆 {tournament.name}")
+            tournament.category_id = category.id
+            
+            # Create selected channels
+            for channel_name in data["channels"]:
+                emoji = CHANNEL_EMOJI_MAP[channel_name]
+                
+                # Determine permissions based on channel type
+                overwrites = {
+                    guild.default_role: discord.PermissionOverwrite(read_messages=True)
+                }
+                
+                # Read-only channels
+                if channel_name in ["announcements", "rules", "bracket"]:
+                    overwrites[guild.default_role] = discord.PermissionOverwrite(
+                        read_messages=True,
+                        send_messages=False
+                    )
+                
+                # Create the channel
+                channel = await guild.create_text_channel(
+                    name=f"{emoji}{channel_name}",
+                    category=category,
+                    overwrites=overwrites
+                )
+                
+                # Store channel ID
+                if channel_name == "announcements":
+                    tournament.announcement_channel_id = channel.id
+                elif channel_name == "rules":
+                    tournament.rules_channel_id = channel.id
+                elif channel_name == "bracket":
+                    tournament.bracket_channel_id = channel.id
+                elif channel_name == "sign_up":
+                    tournament.signup_channel_id = channel.id
+                elif channel_name == "lobby":
+                    tournament.lobby_channel_id = channel.id
+                elif channel_name == "questions":
+                    tournament.questions_channel_id = channel.id
+
+
+        except Exception as e:
+            print(f"Error creating tournament: {e}")
+            await interaction.followup.send(f"Error creating tournament: {e}", ephemeral=True)
