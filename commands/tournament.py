@@ -448,7 +448,14 @@ class PlayerSignupModal(Modal):
             # Validate inputs
             current_mmr = int(self.current_mmr.value)
             peak_mmr = int(self.peak_mmr.value)
-
+            
+            if current_mmr < 0 or peak_mmr < 0:
+                await interaction.response.send_message("MMR values cannot be negative.", ephemeral=True)
+                return
+            
+            if peak_mmr < current_mmr:
+                await interaction.response.send_message("Peak MMR cannot be lower than current MMR.", ephemeral=True)
+                return
 
         except ValueError:
             await interaction.response.send_message("Please enter valid numbers for MMR values.", ephemeral=True)
