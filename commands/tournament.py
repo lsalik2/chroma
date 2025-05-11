@@ -526,3 +526,9 @@ class PlayerSignupModal(Modal):
         embed.add_field(name="Players", value=player_list, inline=False)
         embed.add_field(name="Team Captain", value=f"<@{team.captain_id}>", inline=True)
         embed.add_field(name="Avg MMR", value=f"{team.calculate_average_mmr():.1f}", inline=True)
+        
+        # Send approval message with buttons
+        await admin_channel.send(
+            embed=embed,
+            view=TeamApprovalView(self.tournament, team.id) # will add later
+        )
