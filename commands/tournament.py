@@ -4,7 +4,7 @@ import discord
 from discord import Interaction, ButtonStyle, Button, SelectOption
 from discord.ui import Modal, TextInput, View, Select
 
-from models.tournament import TournamentFormat, Tournament, Player
+from models.tournament import TournamentFormat, Tournament, Player, Team
 from utils.tournament_db import TournamentDatabase
 
 # Constants
@@ -478,7 +478,28 @@ class PlayerSignupModal(Modal):
                     view=TeamChoiceView(self.tournament, player), # will add later
                     ephemeral=True
                 )
-
+            else:
+                # For BALANCE and RANDOM formats, create a temporary solo team
+                team = Team(
+                    name=f"{interaction.user.display_name}'s Team",
+                    captain_id=interaction.user.id
+                )
+                team.add_player(player)
+                
+                # Add to tournament
+                team_id = self.tournament.add_team(team)
+                
+                # Save tournament
+                TournamentDatabase.save_tournament(self.tournament)
+                
+                # Send admin approval message
+                await self.send_admin_approval(interaction, team)
+                
+                await interaction.response.send_message(
+                    f"Thanks for signing up! Your registration is pending admin approval.",
+                    ephemeral=True
+                )
+        
         except ValueError:
             await interaction.response.send_message("Please enter valid numbers for MMR values.", ephemeral=True)
         except Exception as e:
