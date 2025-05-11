@@ -641,3 +641,10 @@ class CreateTeamModal(Modal):
                 embed=embed,
                 view=TeamApprovalView(self.tournament, team.id) # will add later
             )
+        
+        await interaction.response.send_message(
+            f"Team **{team.name}** has been created! Your registration is pending admin approval.\n\n"
+            f"Team Password: {team.password if team.password else 'None (anyone can join)'}\n\n"
+            f"Share this password with your teammates so they can join your team.",
+            ephemeral=True
+        )
