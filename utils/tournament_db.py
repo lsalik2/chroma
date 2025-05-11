@@ -87,3 +87,19 @@ class TournamentDatabase:
         except Exception as e:
             print(f"Error deleting tournament: {e}")
             return False
+    
+    @staticmethod
+    def get_tournament_by_match(match_id: str) -> Optional[Tournament]:
+        """Find tournament containing a specific match"""
+        try:
+            for filename in os.listdir(TOURNAMENTS_DIR):
+                if filename.endswith('.json'):
+                    tournament_id = filename[:-5]
+                    tournament = TournamentDatabase.load_tournament(tournament_id)
+                    
+                    if tournament and match_id in tournament.matches:
+                        return tournament
+        except Exception as e:
+            print(f"Error finding tournament by match: {e}")
+        
+        return None
