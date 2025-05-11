@@ -418,3 +418,11 @@ class PlayerSignupModal(Modal):
     def __init__(self, tournament: Tournament):
         super().__init__(title=f"Sign up for {tournament.name}")
         self.tournament = tournament
+        
+        self.epic_username = TextInput(
+            label="Epic Username",
+            placeholder="Your Rocket League Epic username",
+            required=True,
+            max_length=100
+        )
+        self.add_item(self.epic_username)
