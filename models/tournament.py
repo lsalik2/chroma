@@ -142,3 +142,41 @@ class Match:
             return self.team2_id
         
         return None  # No majority yet
+    
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "team1_id": self.team1_id,
+            "team2_id": self.team2_id,
+            "round_number": self.round_number,
+            "match_number": self.match_number,
+            "status": self.status.value,
+            "winner_id": self.winner_id,
+            "loser_id": self.loser_id,
+            "votes": self.votes,
+            "channel_id": self.channel_id,
+            "created_at": self.created_at.isoformat(),
+            "lobby_name": self.lobby_name,
+            "lobby_password": self.lobby_password,
+            "checked_in": self.checked_in
+        }
+    
+    @classmethod
+    def from_dict(cls, data):
+        match = cls(
+            match_id=data["id"],
+            team1_id=data["team1_id"],
+            team2_id=data["team2_id"],
+            round_number=data["round_number"],
+            match_number=data["match_number"]
+        )
+        match.status = MatchStatus(data["status"])
+        match.winner_id = data["winner_id"]
+        match.loser_id = data["loser_id"]
+        match.votes = data["votes"]
+        match.channel_id = data["channel_id"]
+        match.created_at = datetime.fromisoformat(data["created_at"])
+        match.lobby_name = data["lobby_name"]
+        match.lobby_password = data["lobby_password"]
+        match.checked_in = data["checked_in"]
+        return match
