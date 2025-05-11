@@ -15,3 +15,14 @@ class TournamentScheduler:
         
         self.running = True
         asyncio.create_task(self._scheduler_loop())
+    
+    async def stop(self):
+        """Stop the scheduler"""
+        self.running = False
+        
+        # Cancel all tasks
+        for task_id, task in self.scheduled_tasks.items():
+            if not task.done():
+                task.cancel()
+        
+        self.scheduled_tasks = {}
