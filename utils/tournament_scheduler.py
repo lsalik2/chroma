@@ -1,5 +1,5 @@
 import asyncio
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from utils.tournament_db import TournamentDatabase
 from models.tournament import Tournament
@@ -82,3 +82,33 @@ class TournamentScheduler:
         # Save if we removed any reminders
         if reminders_to_remove:
             TournamentDatabase.save_tournament(tournament)
+    
+    async def _process_match_timeouts(self, tournament: Tournament):
+        """Check for match timeouts and handle forfeits"""
+        # Get all in-progress matches
+        in_progress_matches = [
+            match for match in tournament.matches.values()
+            if match.status.value == 'pending'
+        ]
+        
+        now = datetime.now()
+        timeout_threshold = timedelta(minutes=10)  # 10 minute timeout
+        
+        # Create forfeit tasks for matches that have timed out
+        for match in in_progress_matches:
+            # Skip if both teams are checked in
+            if all(match.checked_in.values()):
+                continue
+            
+            # Skip if created less than threshold ago
+            if now - match.created_at < timeout_threshold:
+                continue
+            
+            # Create a task to handle the forfeit
+            task_id = f"forfeit_{tournament.id}_{match.id}"
+            if task_id not in self.scheduled_tasks:
+                task = asyncio.create_task(self._handle_match_forfeit(tournament, match))
+                self.scheduled_tasks[task_id] = task
+                
+                # Add callback to remove task when done
+                task.add_done_callback(lambda t, tid=task_id: self._task_done_callback(tid))
