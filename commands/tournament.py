@@ -616,3 +616,9 @@ class CreateTeamModal(Modal):
             password=self.team_password.value if self.team_password.value else None
         )
         team.add_player(self.player)  # Use the stored player object
+        
+        # Add to tournament
+        team_id = self.tournament.add_team(team)
+        
+        # Save tournament
+        TournamentDatabase.save_tournament(self.tournament)
