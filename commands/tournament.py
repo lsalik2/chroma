@@ -577,3 +577,11 @@ class CreateTeamModal(Modal):
             max_length=100
         )
         self.add_item(self.team_name)
+        
+        self.team_password = TextInput(
+            label="Team Password (Optional)",
+            placeholder="Password for others to join your team",
+            required=False,
+            max_length=50
+        )
+        self.add_item(self.team_password)
