@@ -103,3 +103,34 @@ class TournamentDatabase:
             print(f"Error finding tournament by match: {e}")
         
         return None
+    
+    @staticmethod
+    def get_tournament_by_channel(channel_id: int) -> Optional[Tournament]:
+        """Find tournament related to a specific channel"""
+        try:
+            for filename in os.listdir(TOURNAMENTS_DIR):
+                if filename.endswith('.json'):
+                    tournament_id = filename[:-5]
+                    tournament = TournamentDatabase.load_tournament(tournament_id)
+                    
+                    if not tournament:
+                        continue
+                        
+                    # Check if channel is related to this tournament
+                    if (tournament.bracket_channel_id == channel_id or
+                        tournament.announcement_channel_id == channel_id or
+                        tournament.admin_channel_id == channel_id or
+                        tournament.signup_channel_id == channel_id or
+                        tournament.rules_channel_id == channel_id or
+                        tournament.lobby_channel_id == channel_id or
+                        tournament.questions_channel_id == channel_id):
+                        return tournament
+                    
+                    # Check if it's a match channel
+                    for match in tournament.matches.values():
+                        if match.channel_id == channel_id:
+                            return tournament
+        except Exception as e:
+            print(f"Error finding tournament by channel: {e}")
+        
+        return None
