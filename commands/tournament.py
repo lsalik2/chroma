@@ -168,3 +168,16 @@ class TournamentChannelsView(View):
         )
         self.channels_select.callback = self.on_select
         self.add_item(self.channels_select)
+    
+    async def on_select(self, interaction: Interaction):
+        # Store selected channels
+        self.tournament_data["channels"] = self.channels_select.values
+        
+        # Confirm selection
+        channels_text = "\n".join([f"{CHANNEL_EMOJI_MAP[channel]} {channel.capitalize()}" for channel in self.channels_select.values])
+        
+        await interaction.response.send_message(
+            f"Selected channels:\n{channels_text}\n\nCreate tournament with these settings?",
+            view=TournamentConfirmView(self.tournament_data),
+            ephemeral=True
+        )
