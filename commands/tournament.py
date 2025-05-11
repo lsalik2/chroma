@@ -608,3 +608,11 @@ class CreateTeamModal(Modal):
         for team in existing_teams:
             if team.status == TeamStatus.DENIED:
                 del self.tournament.teams[team.id]
+        
+        # Create team
+        team = Team(
+            name=self.team_name.value,
+            captain_id=interaction.user.id,
+            password=self.team_password.value if self.team_password.value else None
+        )
+        team.add_player(self.player)  # Use the stored player object
