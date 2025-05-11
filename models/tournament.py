@@ -127,3 +127,18 @@ class Match:
     
     def record_vote(self, user_id: int, team_id: str) -> None:
         self.votes[user_id] = team_id
+    
+    def determine_result(self, team1_players: List[int], team2_players: List[int]) -> Optional[str]:
+        """Determine the winner based on votes"""
+        team1_votes = sum(1 for team in self.votes.values() if team == self.team1_id)
+        team2_votes = sum(1 for team in self.votes.values() if team == self.team2_id)
+        
+        total_players = len(team1_players) + len(team2_players)
+        majority = total_players // 2 + 1
+        
+        if team1_votes >= majority:
+            return self.team1_id
+        elif team2_votes >= majority:
+            return self.team2_id
+        
+        return None  # No majority yet
