@@ -470,6 +470,14 @@ class PlayerSignupModal(Modal):
                 current_mmr=current_mmr,
                 peak_mmr=peak_mmr
             )
+            
+            # If CHOOSE format, ask to create/join team
+            if self.tournament.format == TournamentFormat.CHOOSE:
+                await interaction.response.send_message(
+                    "Would you like to create a new team or join an existing team?",
+                    view=TeamChoiceView(self.tournament, player), # will add later
+                    ephemeral=True
+                )
 
         except ValueError:
             await interaction.response.send_message("Please enter valid numbers for MMR values.", ephemeral=True)
