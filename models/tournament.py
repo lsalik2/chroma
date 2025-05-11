@@ -55,3 +55,11 @@ class Team:
         self.status = TeamStatus.PENDING
         self.seeding = 0  # Will be set when tournament starts
         self.denial_reason = None
+    
+    def add_player(self, player: Player) -> bool:
+        # Check if player already exists
+        if any(p.user_id == player.user_id for p in self.players):
+            return False
+        
+        self.players.append(player)
+        return True
