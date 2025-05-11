@@ -233,3 +233,12 @@ class Tournament:
             if team.status != TeamStatus.DENIED and team.name.lower() == team_name.lower():
                 return team
         return None
+    
+    def get_player_team(self, user_id: int) -> Optional[Team]:
+        """Get the team a player is on (only returns approved or pending teams)"""
+        for team in self.teams.values():
+            # Only consider approved or pending teams
+            if team.status != TeamStatus.DENIED:
+                if any(p.user_id == user_id for p in team.players):
+                    return team
+        return None
