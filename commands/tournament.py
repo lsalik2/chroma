@@ -569,3 +569,11 @@ class CreateTeamModal(Modal):
         super().__init__(title="Create a Team")
         self.tournament = tournament
         self.player = player  # Store the player object directly
+        
+        self.team_name = TextInput(
+            label="Team Name",
+            placeholder="Enter your team name",
+            required=True,
+            max_length=100
+        )
+        self.add_item(self.team_name)
