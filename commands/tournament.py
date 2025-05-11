@@ -277,6 +277,10 @@ class TournamentConfirmView(View):
                     )
             
             # If no tournament admin role is set, fall back to any role with "admin" in the name
+            # TODO now that I think about it, this is probably a terrible idea
+            #      eventually this probably should be changed to default to anyone with admin permissions
+            #      for now I'll leave it as is since I don't think anyone is gonna have a role named admin that's not an admin
+            #      and no one is gonna go source-code diving to find this flaw (hopefully lol)
             if not admin_role:
                 for role in guild.roles:
                     if "admin" in role.name.lower():
@@ -286,6 +290,20 @@ class TournamentConfirmView(View):
                             send_messages=True
                         )
                         break
+            
+            # Add creator to admin channel permissions
+            admin_overwrites[interaction.user] = discord.PermissionOverwrite(
+                read_messages=True,
+                send_messages=True
+            )
+            
+            # Also add permissions for users with administrator permissions
+            for member in guild.members:
+                if member.guild_permissions.administrator:
+                    admin_overwrites[member] = discord.PermissionOverwrite(
+                        read_messages=True,
+                        send_messages=True
+                    )
 
         except Exception as e:
             print(f"Error creating tournament: {e}")
