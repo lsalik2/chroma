@@ -1873,3 +1873,21 @@ async def edit_tournament(interaction: Interaction, tournament_id: str = None): 
         view=TournamentEditView(tournament),
         ephemeral=True
     )
+
+
+class TournamentEditView(View):
+    def __init__(self, tournament: Tournament):
+        super().__init__()
+        self.tournament = tournament
+    
+    @discord.ui.button(label="Edit Name", style=ButtonStyle.primary, row=0)
+    async def edit_name_button(self, interaction: Interaction, button: Button):
+        await interaction.response.send_modal(TournamentEditNameModal(self.tournament))
+    
+    @discord.ui.button(label="Edit Deadline", style=ButtonStyle.primary, row=0)
+    async def edit_deadline_button(self, interaction: Interaction, button: Button):
+        await interaction.response.send_modal(TournamentEditDeadlineModal(self.tournament))
+    
+    @discord.ui.button(label="Edit Prizes", style=ButtonStyle.primary, row=1)
+    async def edit_prizes_button(self, interaction: Interaction, button: Button):
+        await interaction.response.send_modal(TournamentEditPrizesModal(self.tournament))
