@@ -2350,3 +2350,11 @@ async def signup_command(interaction: Interaction):
             ephemeral=True
         )
         return
+    
+    # Check if already signed up
+    if tournament.is_player_registered(interaction.user.id):
+        await interaction.response.send_message(
+            "You are already registered for this tournament.",
+            ephemeral=True
+        )
+        return
