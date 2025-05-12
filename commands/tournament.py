@@ -1129,3 +1129,10 @@ async def create_match_channel(interaction: Interaction, tournament: Tournament,
         embed=embed,
         view=MatchCheckInView(tournament, match.id)
     )
+
+
+class MatchCheckInView(View):
+    def __init__(self, tournament: Tournament, match_id: str):
+        super().__init__(timeout=None)
+        self.tournament = tournament
+        self.match_id = match_id
