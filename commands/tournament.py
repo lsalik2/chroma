@@ -1042,3 +1042,34 @@ async def create_match_channel(interaction: Interaction, tournament: Tournament,
     
     match.lobby_name = lobby_name
     match.lobby_password = lobby_password
+    
+    # Create channel permissions
+    guild = interaction.guild
+    category = guild.get_channel(tournament.category_id)
+    
+    overwrites = {
+        guild.default_role: discord.PermissionOverwrite(read_messages=False),
+    }
+    
+    # Add tournament admin role
+    from utils.config_storage import ConfigStorage
+    admin_role_id = ConfigStorage.get_tournament_admin_role(guild.id)
+    
+    if admin_role_id:
+        admin_role = guild.get_role(admin_role_id)
+        if admin_role:
+            overwrites[admin_role] = discord.PermissionOverwrite(
+                read_messages=True,
+                send_messages=True
+            )
+    
+    # If no tournament admin role, fall back to checking for roles with "admin" in the name
+    if not admin_role_id:
+        for role in guild.roles:
+            if "admin" in role.name.lower():
+                admin_role = role
+                overwrites[admin_role] = discord.PermissionOverwrite(
+                    read_messages=True,
+                    send_messages=True
+                )
+                break
