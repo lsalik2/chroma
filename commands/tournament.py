@@ -2031,3 +2031,10 @@ class TournamentEditPrizesModal(Modal):
             f"Tournament prizes updated.\n\nOld prizes: {old_prizes}\nNew prizes: {self.tournament.prize_info or 'None'}",
             ephemeral=True
         )
+
+
+class TeamEditView(View):
+    def __init__(self, tournament: Tournament, team_id: str):
+        super().__init__()
+        self.tournament = tournament
+        self.team_id = team_id
