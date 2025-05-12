@@ -2105,3 +2105,28 @@ class TeamEditView(View):
             view=player_select_view,
             ephemeral=True
         )
+    
+    @discord.ui.button(label="Change Status", style=ButtonStyle.primary, row=1)
+    async def change_status_button(self, interaction: Interaction, button: Button):
+        team = self.tournament.get_team(self.team_id)
+        if not team:
+            await interaction.response.send_message("Team not found.", ephemeral=True)
+            return
+        
+        options = []
+        for status in TeamStatus:
+            options.append(
+                SelectOption(
+                    label=status.value.capitalize(),
+                    value=status.value,
+                    description=f"Set team status to {status.value}",
+                    default=(team.status == status)
+                )
+            )
+        
+        select = Select(
+            placeholder="Select new team status...",
+            min_values=1,
+            max_values=1,
+            options=options
+        )
