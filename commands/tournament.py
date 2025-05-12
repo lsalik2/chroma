@@ -930,7 +930,7 @@ class StartTournamentView(View):
         
         # Create match channels for pending matches
         for match in self.tournament.get_pending_matches():
-            await create_match_channel(interaction, self.tournament, match) # will add later
+            await create_match_channel(interaction, self.tournament, match)
         
         ## Announce the start
         if self.tournament.announcement_channel_id:
@@ -1073,3 +1073,59 @@ async def create_match_channel(interaction: Interaction, tournament: Tournament,
                     send_messages=True
                 )
                 break
+    
+    # Add Discord administrators
+    for member in guild.members:
+        if member.guild_permissions.administrator:
+            overwrites[member] = discord.PermissionOverwrite(
+                read_messages=True,
+                send_messages=True
+            )
+    
+    # Add teams
+    for player in team1.players + team2.players:
+        member = guild.get_member(player.user_id)
+        if member:
+            overwrites[member] = discord.PermissionOverwrite(
+                read_messages=True,
+                send_messages=True
+            )
+    
+    # Create channel
+    match_name = f"match-{team1.name.lower().replace(' ', '-')}-vs-{team2.name.lower().replace(' ', '-')}"
+    if len(match_name) > 90:  # Keep within Discord's limit
+        match_name = f"match-{match.id[-8:]}"
+    
+    channel = await guild.create_text_channel(
+        name=match_name,
+        category=category,
+        overwrites=overwrites
+    )
+    
+    match.channel_id = channel.id
+    
+    # Save the tournament
+    TournamentDatabase.save_tournament(tournament)
+    
+    # Create match check-in message
+    embed = discord.Embed(
+        title=f"Match: {team1.name} vs {team2.name}",
+        description="Please check in for your match by clicking the button below.",
+        color=discord.Color.blue()
+    )
+    
+    team1_players = "\n".join([f"<@{p.user_id}>" for p in team1.players])
+    team2_players = "\n".join([f"<@{p.user_id}>" for p in team2.players])
+    
+    embed.add_field(name=f"Team {team1.name}", value=team1_players, inline=True)
+    embed.add_field(name=f"Team {team2.name}", value=team2_players, inline=True)
+    
+    # Mention all players
+    mentions = " ".join([f"<@{p.user_id}>" for p in team1.players + team2.players])
+    
+    # Send initial message with check-in buttons
+    message = await channel.send(
+        content=f"{mentions} Your match is ready!",
+        embed=embed,
+        view=MatchCheckInView(tournament, match.id)
+    )
