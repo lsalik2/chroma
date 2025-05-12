@@ -1668,3 +1668,30 @@ class TeamApprovalSelectView(View):
         )
         self.teams_select.callback = self.on_team_select
         self.add_item(self.teams_select)
+    
+    async def on_team_select(self, interaction: Interaction):
+        team_id = self.teams_select.values[0]
+        
+        if team_id == "none":
+            await interaction.response.send_message("No pending teams available.", ephemeral=True)
+            return
+        
+        team = self.tournament.get_team(team_id)
+        
+        if not team:
+            await interaction.response.send_message("Team not found.", ephemeral=True)
+            return
+        
+        # Approve the team
+        self.tournament.approve_team(team_id)
+        TournamentDatabase.save_tournament(self.tournament)
+        
+        # Notify team members
+        for player in team.players:
+            try:
+                user = await interaction.client.fetch_user(player.user_id)
+                await user.send(f"Your team **{team.name}** has been approved for the tournament **{self.tournament.name}**!")
+            except:
+                pass  # Ignore if DM fails
+        
+        await interaction.response.send_message(f"Team **{team.name}** has been approved!", ephemeral=True)
