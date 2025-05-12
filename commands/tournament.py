@@ -1775,3 +1775,24 @@ class TeamDenialSelectView(View):
         
         # Show denial modal
         await interaction.response.send_modal(TeamDenialModal(self.tournament, team_id))
+
+
+async def update_bracket(interaction: Interaction, tournament_id: str = None):
+    """Update the tournament bracket display"""
+    # If no tournament ID provided, check for admin channel
+    if not tournament_id:
+        tournament = TournamentDatabase.get_tournament_by_channel(interaction.channel_id)
+        if not tournament:
+            # Show list of tournaments to select from
+            await interaction.response.send_message(
+                "Please specify which tournament to update bracket for:",
+                view=TournamentSelectView(interaction.user.id, "bracket"),
+                ephemeral=True
+            )
+            return
+        tournament_id = tournament.id
+    
+    tournament = TournamentDatabase.load_tournament(tournament_id)
+    if not tournament:
+        await interaction.response.send_message("Tournament not found.", ephemeral=True)
+        return
