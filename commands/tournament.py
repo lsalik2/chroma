@@ -1940,3 +1940,18 @@ class TournamentEditView(View):
             view=team_select_view,
             ephemeral=True
         )
+
+
+class TournamentEditNameModal(Modal):
+    def __init__(self, tournament: Tournament):
+        super().__init__(title="Edit Tournament Name")
+        self.tournament = tournament
+        
+        self.name = TextInput(
+            label="New Tournament Name",
+            placeholder="Enter new tournament name",
+            required=True,
+            max_length=100,
+            default=tournament.name
+        )
+        self.add_item(self.name)
