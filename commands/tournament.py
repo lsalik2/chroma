@@ -1955,3 +1955,15 @@ class TournamentEditNameModal(Modal):
             default=tournament.name
         )
         self.add_item(self.name)
+    
+    async def on_submit(self, interaction: Interaction):
+        old_name = self.tournament.name
+        self.tournament.name = self.name.value
+        
+        # Save the tournament
+        TournamentDatabase.save_tournament(self.tournament)
+        
+        await interaction.response.send_message(
+            f"Tournament name changed from **{old_name}** to **{self.tournament.name}**.",
+            ephemeral=True
+        )
