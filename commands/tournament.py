@@ -1247,3 +1247,25 @@ class MatchReportView(View):
     @discord.ui.button(label="Report Team 2 Win", style=ButtonStyle.primary, row=0)
     async def team2_win_button(self, interaction: Interaction, button: Button):
         await self.report_result(interaction, is_team1_win=False)
+    
+    async def report_result(self, interaction: Interaction, is_team1_win: bool):
+        match = self.tournament.get_match(self.match_id)
+        if not match:
+            await interaction.response.send_message("Match not found.", ephemeral=True)
+            return
+        
+        team1 = self.tournament.get_team(match.team1_id)
+        team2 = self.tournament.get_team(match.team2_id)
+        
+        # Check if user is part of the match
+        is_participant = False
+        for player in team1.players + team2.players:
+            if player.user_id == interaction.user.id:
+                is_participant = True
+                break
+
+        is_admin = is_tournament_admin(interaction.user)
+        
+        if not is_participant and not is_admin:
+            await interaction.response.send_message("You are not a participant in this match.", ephemeral=True)
+            return
