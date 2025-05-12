@@ -948,3 +948,16 @@ async def update_bracket_display(interaction: Interaction, tournament: Tournamen
     channel = interaction.guild.get_channel(tournament.bracket_channel_id)
     if not channel:
         return
+    
+    # Get all teams
+    approved_teams = tournament.get_approved_teams()
+    
+    # Create team list message
+    team_list = "# Registered Teams\n\n"
+    for team in sorted(approved_teams, key=lambda t: t.seeding):
+        player_names = ", ".join([p.username for p in team.players])
+        team_list += f"**Seed #{team.seeding}: {team.name}** - {player_names}\n"
+    
+    # Send team list
+    await channel.send(team_list)
+    
