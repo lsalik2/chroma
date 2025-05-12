@@ -2175,3 +2175,20 @@ class TeamEditNameModal(Modal):
             default=team.name
         )
         self.add_item(self.name)
+    
+    async def on_submit(self, interaction: Interaction):
+        # Check if new name is already taken
+        if self.name.value != self.team.name and self.tournament.get_team_by_name(self.name.value):
+            await interaction.response.send_message("A team with this name already exists.", ephemeral=True)
+            return
+        
+        old_name = self.team.name
+        self.team.name = self.name.value
+        
+        # Save the tournament
+        TournamentDatabase.save_tournament(self.tournament)
+        
+        await interaction.response.send_message(
+            f"Team name changed from **{old_name}** to **{self.team.name}**.",
+            ephemeral=True
+        )
