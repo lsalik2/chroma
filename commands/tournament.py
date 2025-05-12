@@ -1206,3 +1206,29 @@ class MatchCheckInView(View):
         else:
             # Start timeout for other team
             await interaction.followup.send(f"Team {team2.name} has checked in! Waiting for the other team...")
+    
+    async def both_teams_checked_in(self, interaction: Interaction):
+        match = self.tournament.get_match(self.match_id)
+        team1 = self.tournament.get_team(match.team1_id)
+        team2 = self.tournament.get_team(match.team2_id)
+        
+        # Post lobby info
+        embed = discord.Embed(
+            title="Match Ready!",
+            description="Both teams have checked in. Please join the Rocket League lobby with the information below:",
+            color=discord.Color.green()
+        )
+        
+        embed.add_field(name="Lobby Name", value=match.lobby_name, inline=True)
+        embed.add_field(name="Password", value=match.lobby_password, inline=True)
+        embed.add_field(name="Format", value=f"Best of 3", inline=True)
+        
+        # Update match status
+        match.status = MatchStatus.IN_PROGRESS
+        TournamentDatabase.save_tournament(self.tournament)
+        
+        # Send match report view
+        message = await interaction.followup.send(
+            embed=embed,
+            view=MatchReportView(self.tournament, match.id)
+        )
