@@ -1269,3 +1269,16 @@ class MatchReportView(View):
         if not is_participant and not is_admin:
             await interaction.response.send_message("You are not a participant in this match.", ephemeral=True)
             return
+        
+        # Record vote
+        winner_id = match.team1_id if is_team1_win else match.team2_id
+        match.record_vote(interaction.user.id, winner_id)
+        
+        # Check if there's a majority
+        team1_player_ids = [p.user_id for p in team1.players]
+        team2_player_ids = [p.user_id for p in team2.players]
+        
+        result = match.determine_result(team1_player_ids, team2_player_ids)
+        
+        # Save votes
+        TournamentDatabase.save_tournament(self.tournament)
