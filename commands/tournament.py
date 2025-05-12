@@ -1571,3 +1571,36 @@ async def list_tournaments(interaction: Interaction):
         )
     
     await interaction.response.send_message(embed=embed, ephemeral=True)
+
+
+async def start_tournament(interaction: Interaction, tournament_id: str = None):
+    """Start a tournament"""
+    # If no tournament ID provided, check for admin channel
+    if not tournament_id:
+        tournament = TournamentDatabase.get_tournament_by_channel(interaction.channel_id)
+        if not tournament:
+            # Show list of tournaments to select from
+            await interaction.response.send_message(
+                "Please specify which tournament to start:",
+                view=TournamentSelectView(interaction.user.id, "start"),
+                ephemeral=True
+            )
+            return
+        tournament_id = tournament.id
+    
+    tournament = TournamentDatabase.load_tournament(tournament_id)
+    if not tournament:
+        await interaction.response.send_message("Tournament not found.", ephemeral=True)
+        return
+    
+    # Check if already started
+    if tournament.started_at:
+        await interaction.response.send_message("This tournament has already started.", ephemeral=True)
+        return
+    
+    # Confirm start
+    await interaction.response.send_message(
+        f"Are you sure you want to start tournament **{tournament.name}**?",
+        view=StartTournamentView(tournament),
+        ephemeral=True
+    )
