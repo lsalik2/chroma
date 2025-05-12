@@ -938,3 +938,13 @@ class StartTournamentView(View):
                     f"The tournament has officially begun! Check the bracket channel for match details.\n\n"
                     f"Players in first-round matches should check their match channels for lobby information."
                 )
+
+
+async def update_bracket_display(interaction: Interaction, tournament: Tournament):
+    """Update the bracket display in the bracket channel"""
+    if not tournament.bracket_channel_id:
+        return
+    
+    channel = interaction.guild.get_channel(tournament.bracket_channel_id)
+    if not channel:
+        return
