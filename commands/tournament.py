@@ -966,3 +966,10 @@ async def update_bracket_display(interaction: Interaction, tournament: Tournamen
     
     # Send bracket
     await channel.send("# Tournament Bracket\n\n" + bracket_msg)
+
+
+async def create_bracket_visualization(tournament: Tournament) -> str: # TODO eventually transform this into a nicer looking pillow image creation process
+    """Create a text-based visualization of the tournament bracket"""
+    max_rounds = 0
+    for match in tournament.matches.values():
+        max_rounds = max(max_rounds, match.round_number)
