@@ -2047,3 +2047,32 @@ class TeamEditView(View):
             return
         
         await interaction.response.send_modal(TeamEditNameModal(self.tournament, team))
+    
+    @discord.ui.button(label="Remove Player", style=ButtonStyle.primary, row=0)
+    async def remove_player_button(self, interaction: Interaction, button: Button):
+        team = self.tournament.get_team(self.team_id)
+        if not team:
+            await interaction.response.send_message("Team not found.", ephemeral=True)
+            return
+        
+        if not team.players:
+            await interaction.response.send_message("This team has no players.", ephemeral=True)
+            return
+        
+        # Show player selection
+        options = []
+        for player in team.players:
+            options.append(
+                SelectOption(
+                    label=player.username[:100],  # Max 100 chars
+                    value=str(player.user_id),
+                    description=f"Epic: {player.epic_username[:100]}"
+                )
+            )
+        
+        select = Select(
+            placeholder="Select a player to remove...",
+            min_values=1,
+            max_values=1,
+            options=options
+        )
