@@ -1915,3 +1915,28 @@ class TournamentEditView(View):
             max_values=1,
             options=options[:25]  # Max 25 options
         )
+        
+        async def team_select_callback(team_interaction: Interaction):
+            team_id = select.values[0]
+            team = self.tournament.get_team(team_id)
+            
+            if not team:
+                await team_interaction.response.send_message("Team not found.", ephemeral=True)
+                return
+            
+            await team_interaction.response.send_message(
+                f"Editing team **{team.name}**:",
+                view=TeamEditView(self.tournament, team_id),
+                ephemeral=True
+            )
+        
+        select.callback = team_select_callback
+        
+        team_select_view = View()
+        team_select_view.add_item(select)
+        
+        await interaction.response.send_message(
+            "Select a team to edit:",
+            view=team_select_view,
+            ephemeral=True
+        )
