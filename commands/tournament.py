@@ -1432,3 +1432,38 @@ class ReminderScheduleModal(Modal):
         except ValueError:
             await interaction.response.send_message("Please enter valid numbers for time values.", ephemeral=True)
     
+    async def send_reminder_later(self, interaction: Interaction, reminder_time: datetime, message: str):
+        """Background task to send the reminder at the specified time"""
+        # Calculate seconds to wait
+        now = datetime.now()
+        wait_seconds = (reminder_time - now).total_seconds()
+        
+        if wait_seconds <= 0:
+            return
+        
+        # Wait until it's time
+        await asyncio.sleep(wait_seconds)
+        
+        # Double-check that the tournament still exists and is active
+        tournament = TournamentDatabase.load_tournament(self.tournament.id)
+        if not tournament or not tournament.is_active:
+            return
+        
+        # Send the reminder
+        if tournament.announcement_channel_id:
+            channel = interaction.guild.get_channel(tournament.announcement_channel_id)
+            if channel:
+                # Get all player mentions
+                mentions = []
+                for team in tournament.teams.values():
+                    if team.status == TeamStatus.APPROVED:
+                        for player in team.players:
+                            mentions.append(f"<@{player.user_id}>")
+                
+                mentions_text = " ".join(mentions)
+                
+                await channel.send(
+                    f"# 📢 Tournament Reminder 📢\n\n"
+                    f"{message}\n\n"
+                    f"{mentions_text}"
+                )
