@@ -2358,3 +2358,6 @@ async def signup_command(interaction: Interaction):
             ephemeral=True
         )
         return
+    
+    # Show signup modal
+    await interaction.response.send_modal(PlayerSignupModal(tournament))
