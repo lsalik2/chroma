@@ -1967,3 +1967,18 @@ class TournamentEditNameModal(Modal):
             f"Tournament name changed from **{old_name}** to **{self.tournament.name}**.",
             ephemeral=True
         )
+
+
+class TournamentEditDeadlineModal(Modal):
+    def __init__(self, tournament: Tournament):
+        super().__init__(title="Edit Registration Deadline")
+        self.tournament = tournament
+        
+        self.deadline_days = TextInput(
+            label="Days from now",
+            placeholder="0",
+            required=True,
+            max_length=2,
+            default="7"
+        )
+        self.add_item(self.deadline_days)
