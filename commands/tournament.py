@@ -1695,3 +1695,38 @@ class TeamApprovalSelectView(View):
                 pass  # Ignore if DM fails
         
         await interaction.response.send_message(f"Team **{team.name}** has been approved!", ephemeral=True)
+
+
+async def deny_team(interaction: Interaction, tournament_id: str = None):
+    """Deny a team from participation"""
+    # If no tournament ID provided, check for admin channel
+    if not tournament_id:
+        tournament = TournamentDatabase.get_tournament_by_channel(interaction.channel_id)
+        if not tournament:
+            # Show list of tournaments to select from
+            await interaction.response.send_message(
+                "Please specify which tournament to manage:",
+                view=TournamentSelectView(interaction.user.id, "deny"),
+                ephemeral=True
+            )
+            return
+        tournament_id = tournament.id
+    
+    tournament = TournamentDatabase.load_tournament(tournament_id)
+    if not tournament:
+        await interaction.response.send_message("Tournament not found.", ephemeral=True)
+        return
+    
+    # Get pending teams
+    pending_teams = tournament.get_pending_teams()
+    
+    if not pending_teams:
+        await interaction.response.send_message("No pending teams to deny.", ephemeral=True)
+        return
+    
+    # Show team selection
+    await interaction.response.send_message(
+        "Select a team to deny:",
+        view=TeamDenialSelectView(tournament),
+        ephemeral=True
+    )
