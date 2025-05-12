@@ -1604,3 +1604,38 @@ async def start_tournament(interaction: Interaction, tournament_id: str = None):
         view=StartTournamentView(tournament),
         ephemeral=True
     )
+
+
+async def approve_team(interaction: Interaction, tournament_id: str = None):
+    """Approve a team for participation"""
+    # If no tournament ID provided, check for admin channel
+    if not tournament_id:
+        tournament = TournamentDatabase.get_tournament_by_channel(interaction.channel_id)
+        if not tournament:
+            # Show list of tournaments to select from
+            await interaction.response.send_message(
+                "Please specify which tournament to manage:",
+                view=TournamentSelectView(interaction.user.id, "approve"),
+                ephemeral=True
+            )
+            return
+        tournament_id = tournament.id
+    
+    tournament = TournamentDatabase.load_tournament(tournament_id)
+    if not tournament:
+        await interaction.response.send_message("Tournament not found.", ephemeral=True)
+        return
+    
+    # Get pending teams
+    pending_teams = tournament.get_pending_teams()
+    
+    if not pending_teams:
+        await interaction.response.send_message("No pending teams to approve.", ephemeral=True)
+        return
+    
+    # Show team selection
+    await interaction.response.send_message(
+        "Select a team to approve:",
+        view=TeamApprovalSelectView(tournament),
+        ephemeral=True
+    )
