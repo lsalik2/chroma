@@ -1232,3 +1232,10 @@ class MatchCheckInView(View):
             embed=embed,
             view=MatchReportView(self.tournament, match.id)
         )
+
+
+class MatchReportView(View):
+    def __init__(self, tournament: Tournament, match_id: str):
+        super().__init__(timeout=None)
+        self.tournament = tournament
+        self.match_id = match_id
