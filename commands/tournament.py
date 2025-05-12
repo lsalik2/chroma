@@ -973,3 +973,8 @@ async def create_bracket_visualization(tournament: Tournament) -> str: # TODO ev
     max_rounds = 0
     for match in tournament.matches.values():
         max_rounds = max(max_rounds, match.round_number)
+    
+    # Group matches by round
+    matches_by_round = {}
+    for i in range(1, max_rounds + 1):
+        matches_by_round[i] = tournament.get_matches_by_round(i)
