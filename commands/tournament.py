@@ -2222,3 +2222,35 @@ class TournamentDeleteConfirmView(View):
     def __init__(self, tournament: Tournament):
         super().__init__()
         self.tournament = tournament
+    
+    @discord.ui.button(label="Yes, Delete Tournament", style=ButtonStyle.red, row=0)
+    async def confirm_button(self, interaction: Interaction, button: Button):
+        # Delete the tournament
+        TournamentDatabase.delete_tournament(self.tournament.id)
+        
+        # Archive channels
+        try:
+            guild = interaction.guild
+            
+            # Get the category
+            category = guild.get_channel(self.tournament.category_id)
+            
+            if category:
+                # Archive all channels in the category
+                for channel in category.channels:
+                    try:
+                        # Rename to indicate archived status
+                        await channel.edit(name=f"archived-{channel.name}")
+                    except:
+                        pass
+                
+                # Rename category
+                await category.edit(name=f"🗄️ Archived: {self.tournament.name}")
+        except Exception as e:
+            print(f"Error archiving channels: {e}")
+        
+        await interaction.response.send_message(f"Tournament **{self.tournament.name}** has been deleted.", ephemeral=True)
+    
+    @discord.ui.button(label="Cancel", style=ButtonStyle.gray, row=0)
+    async def cancel_button(self, interaction: Interaction, button: Button):
+        await interaction.response.send_message("Tournament deletion cancelled.", ephemeral=True)
