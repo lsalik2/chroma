@@ -1239,3 +1239,11 @@ class MatchReportView(View):
         super().__init__(timeout=None)
         self.tournament = tournament
         self.match_id = match_id
+    
+    @discord.ui.button(label="Report Team 1 Win", style=ButtonStyle.primary, row=0)
+    async def team1_win_button(self, interaction: Interaction, button: Button):
+        await self.report_result(interaction, is_team1_win=True)
+    
+    @discord.ui.button(label="Report Team 2 Win", style=ButtonStyle.primary, row=0)
+    async def team2_win_button(self, interaction: Interaction, button: Button):
+        await self.report_result(interaction, is_team1_win=False)
