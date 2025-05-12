@@ -2003,3 +2003,19 @@ class TournamentEditDeadlineModal(Modal):
             )
         except ValueError:
             await interaction.response.send_message("Please enter a valid number for days.", ephemeral=True)
+
+
+class TournamentEditPrizesModal(Modal):
+    def __init__(self, tournament: Tournament):
+        super().__init__(title="Edit Tournament Prizes")
+        self.tournament = tournament
+        
+        self.prize_info = TextInput(
+            label="Prize Information",
+            placeholder="Describe tournament prizes",
+            required=False,
+            max_length=1000,
+            style=discord.TextStyle.paragraph,
+            default=tournament.prize_info or ""
+        )
+        self.add_item(self.prize_info)
