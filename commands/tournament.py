@@ -1982,3 +1982,24 @@ class TournamentEditDeadlineModal(Modal):
             default="7"
         )
         self.add_item(self.deadline_days)
+    
+    async def on_submit(self, interaction: Interaction):
+        try:
+            days = int(self.deadline_days.value)
+            if days < 0:
+                await interaction.response.send_message("Days cannot be negative.", ephemeral=True)
+                return
+            
+            old_deadline = self.tournament.registration_deadline
+            new_deadline = datetime.now() + timedelta(days=days)
+            self.tournament.registration_deadline = new_deadline
+            
+            # Save the tournament
+            TournamentDatabase.save_tournament(self.tournament)
+            
+            await interaction.response.send_message(
+                f"Registration deadline changed from <t:{int(old_deadline.timestamp())}:F> to <t:{int(new_deadline.timestamp())}:F>.",
+                ephemeral=True
+            )
+        except ValueError:
+            await interaction.response.send_message("Please enter a valid number for days.", ephemeral=True)
