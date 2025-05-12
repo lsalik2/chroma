@@ -1891,3 +1891,27 @@ class TournamentEditView(View):
     @discord.ui.button(label="Edit Prizes", style=ButtonStyle.primary, row=1)
     async def edit_prizes_button(self, interaction: Interaction, button: Button):
         await interaction.response.send_modal(TournamentEditPrizesModal(self.tournament))
+    
+    @discord.ui.button(label="Edit Team", style=ButtonStyle.primary, row=1)
+    async def edit_team_button(self, interaction: Interaction, button: Button):
+        # Show team selection for editing
+        options = []
+        for team in self.tournament.teams.values():
+            options.append(
+                SelectOption(
+                    label=team.name[:100],  # Max 100 chars
+                    value=team.id,
+                    description=f"Status: {team.status.value.capitalize()}"
+                )
+            )
+        
+        if not options:
+            await interaction.response.send_message("No teams available to edit.", ephemeral=True)
+            return
+        
+        select = Select(
+            placeholder="Select a team to edit...",
+            min_values=1,
+            max_values=1,
+            options=options[:25]  # Max 25 options
+        )
