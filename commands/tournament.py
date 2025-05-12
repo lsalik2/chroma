@@ -1282,3 +1282,21 @@ class MatchReportView(View):
         
         # Save votes
         TournamentDatabase.save_tournament(self.tournament)
+        
+        if result:
+            # We have a winner
+            winner_team = team1 if result == match.team1_id else team2
+            loser_team = team2 if result == match.team1_id else team1
+            
+            # Display winner
+            embed = discord.Embed(
+                title="Match Result",
+                description=f"**{winner_team.name}** has won the match against **{loser_team.name}**!",
+                color=discord.Color.gold()
+            )
+            
+            # Disable all buttons
+            for item in self.children:
+                item.disabled = True
+            
+            await interaction.response.edit_message(embed=embed, view=self)
