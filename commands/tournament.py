@@ -2342,3 +2342,11 @@ async def signup_command(interaction: Interaction):
             ephemeral=True
         )
         return
+    
+    # Check if there's still room
+    if tournament.max_teams and len(tournament.get_approved_teams()) >= tournament.max_teams:
+        await interaction.response.send_message(
+            "This tournament has reached its maximum number of teams.",
+            ephemeral=True
+        )
+        return
