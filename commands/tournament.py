@@ -2327,3 +2327,18 @@ async def signup_command(interaction: Interaction):
             ephemeral=True
         )
         return
+    
+    # Check if registration is still open
+    if tournament.started_at:
+        await interaction.response.send_message(
+            "This tournament has already started. Registration is closed.",
+            ephemeral=True
+        )
+        return
+    
+    if tournament.registration_deadline and tournament.registration_deadline < datetime.now():
+        await interaction.response.send_message(
+            "Registration for this tournament has ended.",
+            ephemeral=True
+        )
+        return
