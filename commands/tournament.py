@@ -1136,3 +1136,73 @@ class MatchCheckInView(View):
         super().__init__(timeout=None)
         self.tournament = tournament
         self.match_id = match_id
+    
+    @discord.ui.button(label="Check-in Team 1", style=ButtonStyle.primary, row=0, custom_id="checkin_team1")
+    async def team1_button(self, interaction: Interaction, button: Button):
+        match = self.tournament.get_match(self.match_id)
+        if not match:
+            await interaction.response.send_message("Match not found.", ephemeral=True)
+            return
+        
+        team1 = self.tournament.get_team(match.team1_id)
+        
+        # Check if user is on team1
+        is_on_team = False
+        for player in team1.players:
+            if player.user_id == interaction.user.id:
+                is_on_team = True
+                break
+        
+        if not is_on_team:
+            await interaction.response.send_message("You are not on this team.", ephemeral=True)
+            return
+        
+        # Mark team as checked in
+        match.checked_in[match.team1_id] = True
+        TournamentDatabase.save_tournament(self.tournament)
+        
+        # Disable the button
+        button.disabled = True
+        await interaction.response.edit_message(view=self)
+        
+        # Check if both teams are checked in
+        if all(match.checked_in.values()):
+            await self.both_teams_checked_in(interaction)
+        else:
+            # Start timeout for other team
+            await interaction.followup.send(f"Team {team1.name} has checked in! Waiting for the other team...")
+    
+    @discord.ui.button(label="Check-in Team 2", style=ButtonStyle.primary, row=0, custom_id="checkin_team2")
+    async def team2_button(self, interaction: Interaction, button: Button):
+        match = self.tournament.get_match(self.match_id)
+        if not match:
+            await interaction.response.send_message("Match not found.", ephemeral=True)
+            return
+        
+        team2 = self.tournament.get_team(match.team2_id)
+        
+        # Check if user is on team2
+        is_on_team = False
+        for player in team2.players:
+            if player.user_id == interaction.user.id:
+                is_on_team = True
+                break
+        
+        if not is_on_team:
+            await interaction.response.send_message("You are not on this team.", ephemeral=True)
+            return
+        
+        # Mark team as checked in
+        match.checked_in[match.team2_id] = True
+        TournamentDatabase.save_tournament(self.tournament)
+        
+        # Disable the button
+        button.disabled = True
+        await interaction.response.edit_message(view=self)
+        
+        # Check if both teams are checked in
+        if all(match.checked_in.values()):
+            await self.both_teams_checked_in(interaction)
+        else:
+            # Start timeout for other team
+            await interaction.followup.send(f"Team {team2.name} has checked in! Waiting for the other team...")
