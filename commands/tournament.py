@@ -2019,3 +2019,15 @@ class TournamentEditPrizesModal(Modal):
             default=tournament.prize_info or ""
         )
         self.add_item(self.prize_info)
+    
+    async def on_submit(self, interaction: Interaction):
+        old_prizes = self.tournament.prize_info or "None"
+        self.tournament.prize_info = self.prize_info.value if self.prize_info.value else None
+        
+        # Save the tournament
+        TournamentDatabase.save_tournament(self.tournament)
+        
+        await interaction.response.send_message(
+            f"Tournament prizes updated.\n\nOld prizes: {old_prizes}\nNew prizes: {self.tournament.prize_info or 'None'}",
+            ephemeral=True
+        )
