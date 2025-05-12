@@ -1759,3 +1759,19 @@ class TeamDenialSelectView(View):
         )
         self.teams_select.callback = self.on_team_select
         self.add_item(self.teams_select)
+    
+    async def on_team_select(self, interaction: Interaction):
+        team_id = self.teams_select.values[0]
+        
+        if team_id == "none":
+            await interaction.response.send_message("No pending teams available.", ephemeral=True)
+            return
+        
+        team = self.tournament.get_team(team_id)
+        
+        if not team:
+            await interaction.response.send_message("Team not found.", ephemeral=True)
+            return
+        
+        # Show denial modal
+        await interaction.response.send_modal(TeamDenialModal(self.tournament, team_id))
