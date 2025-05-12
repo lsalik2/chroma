@@ -1508,3 +1508,23 @@ async def tournament_command(
                 ephemeral=True
             )
             return
+    
+    # Handle different actions
+    if action.value == "create":
+        await create_tournament(interaction)
+    elif action.value == "list":
+        await list_tournaments(interaction)
+    elif action.value == "start":
+        await start_tournament(interaction, tournament_id)
+    elif action.value == "approve":
+        await approve_team(interaction, tournament_id)
+    elif action.value == "deny":
+        await deny_team(interaction, tournament_id)
+    elif action.value == "bracket":
+        await update_bracket(interaction, tournament_id)
+    elif action.value == "reminder":
+        await schedule_reminder(interaction, tournament_id)
+    elif action.value == "edit":
+        await edit_tournament(interaction, tournament_id)
+    elif action.value == "delete":
+        await delete_tournament(interaction, tournament_id)
