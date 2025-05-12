@@ -1351,3 +1351,44 @@ class MatchReportView(View):
                 f"Vote recorded! Current votes: {team1.name}: {team1_votes}, {team2.name}: {team2_votes}",
                 ephemeral=True
             )
+
+
+# ---------------- Reminder Scheduling ----------------
+
+class ReminderScheduleModal(Modal):
+    def __init__(self, tournament: Tournament):
+        super().__init__(title="Schedule Reminder")
+        self.tournament = tournament
+        
+        self.reminder_days = TextInput(
+            label="Days from now",
+            placeholder="0",
+            required=True,
+            max_length=2
+        )
+        self.add_item(self.reminder_days)
+        
+        self.reminder_hours = TextInput(
+            label="Hours from now",
+            placeholder="0",
+            required=True,
+            max_length=2
+        )
+        self.add_item(self.reminder_hours)
+        
+        self.reminder_minutes = TextInput(
+            label="Minutes from now",
+            placeholder="0",
+            required=True,
+            max_length=2
+        )
+        self.add_item(self.reminder_minutes)
+        
+        self.message = TextInput(
+            label="Reminder Message",
+            placeholder="Tournament starts soon!",
+            required=True,
+            max_length=1000,
+            style=discord.TextStyle.paragraph
+        )
+        self.add_item(self.message)
