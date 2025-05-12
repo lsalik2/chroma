@@ -1533,3 +1533,41 @@ async def tournament_command(
 async def create_tournament(interaction: Interaction):
     """Start the tournament creation process"""
     await interaction.response.send_modal(TournamentCreateModal())
+
+
+async def list_tournaments(interaction: Interaction):
+    """List all active tournaments"""
+    tournaments = TournamentDatabase.get_active_tournaments()
+    
+    if not tournaments:
+        await interaction.response.send_message("No active tournaments found.", ephemeral=True)
+        return
+    
+    embed = discord.Embed(
+        title="Active Tournaments",
+        description="Here are the currently active tournaments:",
+        color=discord.Color.blue()
+    )
+    
+    for tournament in tournaments:
+        status = "Registration" if not tournament.started_at else "In Progress"
+        if tournament.ended_at:
+            status = "Completed"
+        
+        # Get team count
+        approved_teams = len(tournament.get_approved_teams())
+        pending_teams = len(tournament.get_pending_teams())
+        
+        embed.add_field(
+            name=tournament.name,
+            value=(
+                f"**Status:** {status}\n"
+                f"**Format:** {tournament.format.value.capitalize()}\n"
+                f"**Team Size:** {tournament.team_size}v{tournament.team_size}\n"
+                f"**Teams:** {approved_teams} approved, {pending_teams} pending\n"
+                f"**ID:** `{tournament.id}`"
+            ),
+            inline=False
+        )
+    
+    await interaction.response.send_message(embed=embed, ephemeral=True)
