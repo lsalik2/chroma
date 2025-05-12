@@ -2313,3 +2313,17 @@ class TournamentSelectView(View):
             await edit_tournament(interaction, tournament_id)
         elif self.action == "delete":
             await delete_tournament(interaction, tournament_id)
+
+
+@app_commands.command(name="signup", description="Sign up for a tournament")
+async def signup_command(interaction: Interaction):
+    """Sign up for a tournament in the signup channel"""
+    # Check if in a signup channel
+    tournament = TournamentDatabase.get_tournament_by_channel(interaction.channel_id)
+    
+    if not tournament or tournament.signup_channel_id != interaction.channel_id:
+        await interaction.response.send_message(
+            "This command can only be used in a tournament signup channel.",
+            ephemeral=True
+        )
+        return
