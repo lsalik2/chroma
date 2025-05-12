@@ -1392,3 +1392,43 @@ class ReminderScheduleModal(Modal):
             style=discord.TextStyle.paragraph
         )
         self.add_item(self.message)
+    
+    async def on_submit(self, interaction: Interaction):
+        try:
+            days = int(self.reminder_days.value or 0)
+            hours = int(self.reminder_hours.value or 0)
+            minutes = int(self.reminder_minutes.value or 0)
+            
+            if days < 0 or hours < 0 or minutes < 0:
+                await interaction.response.send_message("Time values cannot be negative.", ephemeral=True)
+                return
+            
+            if days == 0 and hours == 0 and minutes < 1:
+                await interaction.response.send_message("Reminder must be at least 1 minute in the future.", ephemeral=True)
+                return
+            
+            # Calculate when to send reminder
+            now = datetime.now()
+            reminder_time = now + timedelta(days=days, hours=hours, minutes=minutes)
+            
+            # Store reminder info
+            self.tournament.reminders.append({
+                "time": reminder_time.isoformat(),
+                "message": self.message.value
+            })
+            
+            # Save tournament
+            TournamentDatabase.save_tournament(self.tournament)
+            
+            # Acknowledge
+            await interaction.response.send_message(
+                f"Reminder scheduled for <t:{int(reminder_time.timestamp())}:F>.",
+                ephemeral=True
+            )
+            
+            # Start a background task to handle the reminder
+            asyncio.create_task(self.send_reminder_later(interaction, reminder_time, self.message.value))
+        
+        except ValueError:
+            await interaction.response.send_message("Please enter valid numbers for time values.", ephemeral=True)
+    
