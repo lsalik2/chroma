@@ -1639,3 +1639,32 @@ async def approve_team(interaction: Interaction, tournament_id: str = None):
         view=TeamApprovalSelectView(tournament),
         ephemeral=True
     )
+
+
+class TeamApprovalSelectView(View):
+    def __init__(self, tournament: Tournament):
+        super().__init__()
+        self.tournament = tournament
+        
+        # Add team selection dropdown
+        options = []
+        for team in tournament.get_pending_teams():
+            options.append(
+                SelectOption(
+                    label=team.name[:100],  # Max 100 chars
+                    value=team.id,
+                    description=f"Players: {len(team.players)}/{tournament.team_size}"
+                )
+            )
+        
+        if not options:
+            options.append(SelectOption(label="No pending teams", value="none"))
+        
+        self.teams_select = Select(
+            placeholder="Select a team to approve...",
+            min_values=1,
+            max_values=1,
+            options=options[:25]  # Max 25 options
+        )
+        self.teams_select.callback = self.on_team_select
+        self.add_item(self.teams_select)
