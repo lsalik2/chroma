@@ -2192,3 +2192,27 @@ class TeamEditNameModal(Modal):
             f"Team name changed from **{old_name}** to **{self.team.name}**.",
             ephemeral=True
         )
+
+
+async def delete_tournament(interaction: Interaction, tournament_id: str = None):
+    """Delete a tournament"""
+    # If no tournament ID provided, show list of tournaments
+    if not tournament_id:
+        await interaction.response.send_message(
+            "Please select a tournament to delete:",
+            view=TournamentSelectView(interaction.user.id, "delete"),
+            ephemeral=True
+        )
+        return
+    
+    tournament = TournamentDatabase.load_tournament(tournament_id)
+    if not tournament:
+        await interaction.response.send_message("Tournament not found.", ephemeral=True)
+        return
+    
+    # Confirm deletion
+    await interaction.response.send_message(
+        f"Are you sure you want to delete tournament **{tournament.name}**? This action cannot be undone.",
+        view=TournamentDeleteConfirmView(tournament),
+        ephemeral=True
+    )
