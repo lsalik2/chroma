@@ -2159,3 +2159,19 @@ class TeamEditView(View):
             view=status_select_view,
             ephemeral=True
         )
+
+
+class TeamEditNameModal(Modal):
+    def __init__(self, tournament: Tournament, team: Team):
+        super().__init__(title=f"Edit Team Name")
+        self.tournament = tournament
+        self.team = team
+        
+        self.name = TextInput(
+            label="New Team Name",
+            placeholder="Enter new team name",
+            required=True,
+            max_length=100,
+            default=team.name
+        )
+        self.add_item(self.name)
