@@ -2261,3 +2261,28 @@ class TournamentSelectView(View):
         super().__init__()
         self.user_id = user_id
         self.action = action
+        
+        # Get all tournaments
+        tournaments = TournamentDatabase.get_active_tournaments()
+        
+        options = []
+        for tournament in tournaments:
+            options.append(
+                SelectOption(
+                    label=tournament.name[:100],  # Max 100 chars
+                    value=tournament.id,
+                    description=f"Format: {tournament.format.value.capitalize()}, Teams: {len(tournament.get_approved_teams())}"
+                )
+            )
+        
+        if not options:
+            options.append(SelectOption(label="No tournaments found", value="none"))
+        
+        self.tournaments_select = Select(
+            placeholder="Select a tournament...",
+            min_values=1,
+            max_values=1,
+            options=options[:25]  # Max 25 options
+        )
+        self.tournaments_select.callback = self.on_tournament_select
+        self.add_item(self.tournaments_select)
