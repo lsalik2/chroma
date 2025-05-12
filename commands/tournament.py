@@ -1,10 +1,13 @@
-from datetime import datetime, timedelta
-
 import discord
-from discord import Interaction, ButtonStyle, Button, SelectOption
-from discord.ui import Modal, TextInput, View, Select
+from discord import app_commands, Interaction, ButtonStyle, SelectOption
+from discord.ui import View, Button, Select, Modal, TextInput
+from datetime import datetime, timedelta
+import asyncio
+import random
+from typing import List
+from utils.permissions import is_tournament_admin
 
-from models.tournament import TournamentFormat, Tournament, Player, Team, TeamStatus
+from models.tournament import Tournament, TournamentFormat, Team, Player, Match, TeamStatus, MatchStatus
 from utils.tournament_db import TournamentDatabase
 
 # Constants
@@ -530,7 +533,7 @@ class PlayerSignupModal(Modal):
         # Send approval message with buttons
         await admin_channel.send(
             embed=embed,
-            view=TeamApprovalView(self.tournament, team.id) # will add later
+            view=TeamApprovalView(self.tournament, team.id)
         )
 
 
@@ -542,7 +545,7 @@ class TeamChoiceView(View):
     
     @discord.ui.button(label="Create Team", style=ButtonStyle.primary, row=0)
     async def create_team_button(self, interaction: Interaction, button: Button):
-        await interaction.response.send_modal(CreateTeamModal(self.tournament, self.player)) # will add later
+        await interaction.response.send_modal(CreateTeamModal(self.tournament, self.player))
     
     @discord.ui.button(label="Join Team", style=ButtonStyle.primary, row=0)
     async def join_team_button(self, interaction: Interaction, button: Button):
@@ -559,7 +562,7 @@ class TeamChoiceView(View):
         # Show team selection
         await interaction.response.send_message(
             "Select a team to join:",
-            view=TeamSelectView(self.tournament, self.player, available_teams), # will add later
+            view=TeamSelectView(self.tournament, self.player, available_teams),
             ephemeral=True
         )
 
@@ -639,7 +642,7 @@ class CreateTeamModal(Modal):
             
             await admin_channel.send(
                 embed=embed,
-                view=TeamApprovalView(self.tournament, team.id) # will add later
+                view=TeamApprovalView(self.tournament, team.id)
             )
         
         await interaction.response.send_message(
@@ -690,7 +693,7 @@ class TeamSelectView(View):
         
         # Check if team requires a password
         if team.password:
-            await interaction.response.send_modal(TeamPasswordModal(self.tournament, team, self.player)) # will add later
+            await interaction.response.send_modal(TeamPasswordModal(self.tournament, team, self.player))
         else:
             # Join team without password
             await self.join_team(interaction, team)
@@ -923,7 +926,7 @@ class StartTournamentView(View):
         await interaction.response.edit_message(view=self)
         
         # Update bracket channel
-        await update_bracket_display(interaction, self.tournament) # will add later
+        await update_bracket_display(interaction, self.tournament)
         
         # Create match channels for pending matches
         for match in self.tournament.get_pending_matches():
@@ -1019,3 +1022,23 @@ async def create_bracket_visualization(tournament: Tournament) -> str: # TODO ev
     
     bracket += "```"
     return bracket
+
+
+async def create_match_channel(interaction: Interaction, tournament: Tournament, match: Match):
+    """Create a channel for a match"""
+    if not match.team1_id or not match.team2_id:
+        return  # Skip if not both teams are set
+    
+    team1 = tournament.get_team(match.team1_id)
+    team2 = tournament.get_team(match.team2_id)
+    
+    if not team1 or not team2:
+        return  # Skip if teams not found
+    
+    # Generate a random lobby name and password
+    # TODO there is a minimally small change of duplicate lobby names, might need to add a check for this eventually
+    lobby_name = f"{team1.name[:3].upper()}-{team2.name[:3].upper()}-{random.randint(100, 999)}" 
+    lobby_password = random.choice(PASSWORDS).lower()
+    
+    match.lobby_name = lobby_name
+    match.lobby_password = lobby_password
