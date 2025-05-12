@@ -1816,3 +1816,32 @@ async def update_bracket(interaction: Interaction, tournament_id: str = None):
     except Exception as e:
         print(f"Error updating bracket: {e}")
         await interaction.followup.send(f"Error updating bracket: {e}", ephemeral=True)
+
+
+async def schedule_reminder(interaction: Interaction, tournament_id: str = None):
+    """Schedule a tournament reminder"""
+    # If no tournament ID provided, check for admin channel
+    if not tournament_id:
+        tournament = TournamentDatabase.get_tournament_by_channel(interaction.channel_id)
+        if not tournament:
+            # Show list of tournaments to select from
+            await interaction.response.send_message(
+                "Please specify which tournament to schedule a reminder for:",
+                view=TournamentSelectView(interaction.user.id, "reminder"),
+                ephemeral=True
+            )
+            return
+        tournament_id = tournament.id
+    
+    tournament = TournamentDatabase.load_tournament(tournament_id)
+    if not tournament:
+        await interaction.response.send_message("Tournament not found.", ephemeral=True)
+        return
+    
+    # Check if announcements channel exists
+    if not tournament.announcement_channel_id:
+        await interaction.response.send_message("This tournament doesn't have an announcements channel for reminders.", ephemeral=True)
+        return
+    
+    # Show reminder modal
+    await interaction.response.send_modal(ReminderScheduleModal(tournament))
