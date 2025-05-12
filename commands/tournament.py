@@ -978,3 +978,44 @@ async def create_bracket_visualization(tournament: Tournament) -> str: # TODO ev
     matches_by_round = {}
     for i in range(1, max_rounds + 1):
         matches_by_round[i] = tournament.get_matches_by_round(i)
+    
+    # Build the bracket
+    bracket = "```\n"
+    
+    for round_num in range(1, max_rounds + 1):
+        round_matches = sorted(matches_by_round[round_num], key=lambda m: m.match_number)
+        bracket += f"Round {round_num}:\n"
+        
+        for match in round_matches:
+            team1_name = "TBD"
+            team2_name = "TBD"
+            
+            if match.team1_id:
+                team1 = tournament.get_team(match.team1_id)
+                if team1:
+                    team1_name = team1.name
+            
+            if match.team2_id:
+                team2 = tournament.get_team(match.team2_id)
+                if team2:
+                    team2_name = team2.name
+                else:
+                    team2_name = "BYE"  # Mark as bye match
+            
+            status = ""
+            if match.winner_id:
+                winner_name = "Unknown"
+                if match.winner_id == match.team1_id:
+                    winner_name = team1_name
+                    status = "✓ vs "
+                else:
+                    winner_name = team2_name
+                    status = " vs ✓"
+                bracket += f"  Match {match.match_number}: {team1_name}{status}{team2_name}\n"
+            else:
+                bracket += f"  Match {match.match_number}: {team1_name} vs {team2_name}\n"
+        
+        bracket += "\n"
+    
+    bracket += "```"
+    return bracket
