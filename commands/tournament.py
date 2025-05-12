@@ -2216,3 +2216,9 @@ async def delete_tournament(interaction: Interaction, tournament_id: str = None)
         view=TournamentDeleteConfirmView(tournament),
         ephemeral=True
     )
+
+
+class TournamentDeleteConfirmView(View):
+    def __init__(self, tournament: Tournament):
+        super().__init__()
+        self.tournament = tournament
