@@ -1796,3 +1796,23 @@ async def update_bracket(interaction: Interaction, tournament_id: str = None):
     if not tournament:
         await interaction.response.send_message("Tournament not found.", ephemeral=True)
         return
+    
+    # Check if tournament has started
+    if not tournament.started_at:
+        await interaction.response.send_message("The tournament hasn't started yet.", ephemeral=True)
+        return
+    
+    # Check if bracket channel exists
+    if not tournament.bracket_channel_id:
+        await interaction.response.send_message("This tournament doesn't have a bracket channel.", ephemeral=True)
+        return
+    
+    await interaction.response.defer(ephemeral=True)
+    
+    try:
+        # Update bracket display
+        await update_bracket_display(interaction, tournament)
+        await interaction.followup.send("Tournament bracket has been updated!", ephemeral=True)
+    except Exception as e:
+        print(f"Error updating bracket: {e}")
+        await interaction.followup.send(f"Error updating bracket: {e}", ephemeral=True)
