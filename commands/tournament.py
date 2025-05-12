@@ -2286,3 +2286,30 @@ class TournamentSelectView(View):
         )
         self.tournaments_select.callback = self.on_tournament_select
         self.add_item(self.tournaments_select)
+    
+    async def on_tournament_select(self, interaction: Interaction):
+        if interaction.user.id != self.user_id:
+            await interaction.response.send_message("This selection is not for you.", ephemeral=True)
+            return
+        
+        tournament_id = self.tournaments_select.values[0]
+        
+        if tournament_id == "none":
+            await interaction.response.send_message("No tournaments available.", ephemeral=True)
+            return
+        
+        # Call the appropriate function based on action
+        if self.action == "start":
+            await start_tournament(interaction, tournament_id)
+        elif self.action == "approve":
+            await approve_team(interaction, tournament_id)
+        elif self.action == "deny":
+            await deny_team(interaction, tournament_id)
+        elif self.action == "bracket":
+            await update_bracket(interaction, tournament_id)
+        elif self.action == "reminder":
+            await schedule_reminder(interaction, tournament_id)
+        elif self.action == "edit":
+            await edit_tournament(interaction, tournament_id)
+        elif self.action == "delete":
+            await delete_tournament(interaction, tournament_id)
