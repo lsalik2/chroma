@@ -2361,3 +2361,9 @@ async def signup_command(interaction: Interaction):
     
     # Show signup modal
     await interaction.response.send_modal(PlayerSignupModal(tournament))
+
+
+# Function to register tournament commands
+def register_tournament(tree):
+    tree.add_command(tournament_command)
+    tree.add_command(signup_command)
