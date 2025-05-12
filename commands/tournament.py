@@ -2254,3 +2254,10 @@ class TournamentDeleteConfirmView(View):
     @discord.ui.button(label="Cancel", style=ButtonStyle.gray, row=0)
     async def cancel_button(self, interaction: Interaction, button: Button):
         await interaction.response.send_message("Tournament deletion cancelled.", ephemeral=True)
+
+
+class TournamentSelectView(View):
+    def __init__(self, user_id: int, action: str):
+        super().__init__()
+        self.user_id = user_id
+        self.action = action
