@@ -961,3 +961,8 @@ async def update_bracket_display(interaction: Interaction, tournament: Tournamen
     # Send team list
     await channel.send(team_list)
     
+    # Create bracket visualization
+    bracket_msg = await create_bracket_visualization(tournament)
+    
+    # Send bracket
+    await channel.send("# Tournament Bracket\n\n" + bracket_msg)
