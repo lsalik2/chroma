@@ -2038,3 +2038,12 @@ class TeamEditView(View):
         super().__init__()
         self.tournament = tournament
         self.team_id = team_id
+    
+    @discord.ui.button(label="Change Name", style=ButtonStyle.primary, row=0)
+    async def change_name_button(self, interaction: Interaction, button: Button):
+        team = self.tournament.get_team(self.team_id)
+        if not team:
+            await interaction.response.send_message("Team not found.", ephemeral=True)
+            return
+        
+        await interaction.response.send_modal(TeamEditNameModal(self.tournament, team))
