@@ -1300,3 +1300,54 @@ class MatchReportView(View):
                 item.disabled = True
             
             await interaction.response.edit_message(embed=embed, view=self)
+            
+            # Update match and advance winner
+            next_match = self.tournament.advance_match(match.id, result)
+            
+            # Update bracket display
+            try:
+                await update_bracket_display(interaction, self.tournament)
+            except Exception as e:
+                print(f"Error updating bracket: {e}")
+            
+            # If next match is ready (both teams assigned), create its channel
+            if next_match and next_match.team1_id and next_match.team2_id:
+                await create_match_channel(interaction, self.tournament, next_match)
+            
+            # Check if tournament is complete (only one match in the last round)
+            final_round = max(match.round_number for match in self.tournament.matches.values())
+            final_matches = [m for m in self.tournament.matches.values() if m.round_number == final_round]
+            
+            if len(final_matches) == 1 and final_matches[0].status == MatchStatus.COMPLETED:
+                # Tournament complete
+                self.tournament.ended_at = datetime.now()
+                self.tournament.winner_id = final_matches[0].winner_id
+                TournamentDatabase.save_tournament(self.tournament)
+                
+                # Announce winner
+                if self.tournament.announcement_channel_id:
+                    channel = interaction.guild.get_channel(self.tournament.announcement_channel_id)
+                    if channel:
+                        winner = self.tournament.get_team(self.tournament.winner_id)
+                        if winner:
+                            player_mentions = " ".join([f"<@{p.user_id}>" for p in winner.players])
+                            
+                            prize_text = ""
+                            if self.tournament.prize_info:
+                                prize_text = f"**Prizes:**\n{self.tournament.prize_info}"
+                            
+                            await channel.send(
+                                f"# 🏆 Tournament Champion! 🏆\n\n"
+                                f"Congratulations to **{winner.name}** for winning the tournament!\n\n"
+                                f"Team members: {player_mentions}\n\n"
+                                f"{prize_text}"
+                            )
+        else:
+            # No majority yet
+            team1_votes = sum(1 for team in match.votes.values() if team == match.team1_id)
+            team2_votes = sum(1 for team in match.votes.values() if team == match.team2_id)
+            
+            await interaction.response.send_message(
+                f"Vote recorded! Current votes: {team1.name}: {team1_votes}, {team2.name}: {team2_votes}",
+                ephemeral=True
+            )
