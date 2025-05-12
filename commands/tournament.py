@@ -1467,3 +1467,44 @@ class ReminderScheduleModal(Modal):
                     f"{message}\n\n"
                     f"{mentions_text}"
                 )
+
+
+# ---------------- Main Commands ----------------
+
+@app_commands.command(name="tournament", description="Create and manage tournaments")
+@app_commands.describe(
+    action="The tournament action to perform",
+    tournament_id="Tournament ID (for specific tournament commands)"
+)
+@app_commands.choices(
+    action=[
+        app_commands.Choice(name="create", value="create"),
+        app_commands.Choice(name="list", value="list"),
+        app_commands.Choice(name="start", value="start"),
+        app_commands.Choice(name="approve", value="approve"),
+        app_commands.Choice(name="deny", value="deny"),
+        app_commands.Choice(name="bracket", value="bracket"),
+        app_commands.Choice(name="reminder", value="reminder"),
+        app_commands.Choice(name="edit", value="edit"),
+        app_commands.Choice(name="delete", value="delete"),
+    ]
+)
+async def tournament_command(
+    interaction: Interaction, 
+    action: app_commands.Choice[str],
+    tournament_id: str = None
+):
+    # Directly allow server owner
+    is_server_owner = interaction.user.id == interaction.guild.owner_id
+    
+    # Check permissions (admin commands)
+    admin_actions = ["create", "start", "approve", "deny", "bracket", "reminder", "edit", "delete"]
+    
+    if action.value in admin_actions and not is_server_owner:
+        from utils.permissions import is_tournament_admin
+        if not is_tournament_admin(interaction.user):
+            await interaction.response.send_message(
+                "You need tournament admin permissions to use this command. Please contact a server administrator.",
+                ephemeral=True
+            )
+            return
