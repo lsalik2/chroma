@@ -2076,3 +2076,32 @@ class TeamEditView(View):
             max_values=1,
             options=options
         )
+        
+        async def player_select_callback(player_interaction: Interaction):
+            user_id = int(select.values[0])
+            
+            # Remove player from team
+            if team.remove_player(user_id):
+                # Save tournament
+                TournamentDatabase.save_tournament(self.tournament)
+                
+                await player_interaction.response.send_message(
+                    f"Player removed from team **{team.name}**.",
+                    ephemeral=True
+                )
+            else:
+                await player_interaction.response.send_message(
+                    "Player not found in the team.",
+                    ephemeral=True
+                )
+        
+        select.callback = player_select_callback
+        
+        player_select_view = View()
+        player_select_view.add_item(select)
+        
+        await interaction.response.send_message(
+            "Select a player to remove from the team:",
+            view=player_select_view,
+            ephemeral=True
+        )
