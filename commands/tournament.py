@@ -1845,3 +1845,31 @@ async def schedule_reminder(interaction: Interaction, tournament_id: str = None)
     
     # Show reminder modal
     await interaction.response.send_modal(ReminderScheduleModal(tournament))
+
+
+async def edit_tournament(interaction: Interaction, tournament_id: str = None): # TODO add so that editing name, deadline, etc. also changes their values in the respective parts of the code
+    """Edit tournament details"""
+    # If no tournament ID provided, check for admin channel
+    if not tournament_id:
+        tournament = TournamentDatabase.get_tournament_by_channel(interaction.channel_id)
+        if not tournament:
+            # Show list of tournaments to select from
+            await interaction.response.send_message(
+                "Please specify which tournament to edit:",
+                view=TournamentSelectView(interaction.user.id, "edit"),
+                ephemeral=True
+            )
+            return
+        tournament_id = tournament.id
+    
+    tournament = TournamentDatabase.load_tournament(tournament_id)
+    if not tournament:
+        await interaction.response.send_message("Tournament not found.", ephemeral=True)
+        return
+    
+    # Show edit options
+    await interaction.response.send_message(
+        f"Select what to edit for tournament **{tournament.name}**:",
+        view=TournamentEditView(tournament),
+        ephemeral=True
+    )
