@@ -2130,3 +2130,32 @@ class TeamEditView(View):
             max_values=1,
             options=options
         )
+        
+        async def status_select_callback(status_interaction: Interaction):
+            status_value = select.values[0]
+            old_status = team.status
+            team.status = TeamStatus(status_value)
+            
+            # If denying, ask for reason
+            if team.status == TeamStatus.DENIED and old_status != TeamStatus.DENIED:
+                await status_interaction.response.send_modal(TeamDenialModal(self.tournament, self.team_id))
+                return
+            
+            # Save tournament
+            TournamentDatabase.save_tournament(self.tournament)
+            
+            await status_interaction.response.send_message(
+                f"Team status changed from **{old_status.value}** to **{team.status.value}**.",
+                ephemeral=True
+            )
+        
+        select.callback = status_select_callback
+        
+        status_select_view = View()
+        status_select_view.add_item(select)
+        
+        await interaction.response.send_message(
+            f"Change status for team **{team.name}**:",
+            view=status_select_view,
+            ephemeral=True
+        )
