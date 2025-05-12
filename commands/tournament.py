@@ -1528,3 +1528,8 @@ async def tournament_command(
         await edit_tournament(interaction, tournament_id)
     elif action.value == "delete":
         await delete_tournament(interaction, tournament_id)
+
+
+async def create_tournament(interaction: Interaction):
+    """Start the tournament creation process"""
+    await interaction.response.send_modal(TournamentCreateModal())
